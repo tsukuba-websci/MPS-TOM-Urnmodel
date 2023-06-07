@@ -45,10 +45,8 @@ class GA:
         self.history_vec = []
         self.debug = debug
 
-    def tovec(
-        self, history: List[Tuple[int, int]], interval_num: int
-    ) -> History2VecResult:
-        """履歴をベクトルに変換する．実際にはQDCoreのhistory2vecを呼び出すラッパーとして振る舞っている
+    def tovec(self, history: List[Tuple[int, int]], interval_num: int) -> History2VecResult:
+        """相互やり取りの履歴を10個の指標に変換する．
 
         Args:
             history (List[Tuple[int, int]]): 相互作用履歴
@@ -57,12 +55,10 @@ class GA:
         Returns:
             History2VecResult: 履歴ベクトル
         """
-        return History2Vec(self.jl_main, self.thread_num).history2vec(
-            history, interval_num
-        )
+        return History2Vec(self.jl_main, self.thread_num).history2vec(history, interval_num)
 
     def fitness_function(self, history_vec: list) -> float:
-        """適応度計算．とりあえず，目的関数 * -1 を返す．
+        """適応度計算．目的関数 * -1 を返す．
 
         Args:
             history_vec (list): 履歴ベクトル
@@ -83,34 +79,57 @@ class GA:
         """
         return np.sum(np.abs(np.array(history_vec) - np.array(self.target)))
 
-    def crossover(self, parents1: list, parents2: list) -> list:
+    def selection(self, population: list, fitness: list) -> list:
+        """ルーレット選択．適応度に比例した確率で個体を選択し，親個体にする．この親個体を用いて交叉を行う．
+
+        Args:
+            population (list): 各個体のパラメータ (rho, nu, recentness, friendship) のリスト
+            fitness (list): 各個体の適応度
+
+        Returns:
+            list: 親個体のリスト．交叉を行えるように parents1 (list), parents2 (list) の2つのリストを返す
+        """
+        parents1 = np.zeros((self.population_size, 4))
+        parents2 = np.zeros((self.population_size, 4))
+        for i in range(self.population_size):
+            weights = 1 / fitness
+            weights /= np.sum(weights)
+            parents1[i] = population[np.random.choice(self.population_size, p=weights)]
+            parents2[i] = population[np.random.choice(self.population_size, p=weights)]
+        return parents1, parents2
+
+    def crossover(self, parents1: list, parents2: list, children: list) -> list:
         """交叉．親のうちランダムに選んだものを交叉させる．
 
         Args:
             parents1 (list): 親1 (rho, nu, recentness, friendship) のリスト
             parents2 (list): 親2 (rho, nu, recentness, friendship) のリスト
+            children (list): 子のリスト
 
         Returns:
-            child (list): 子のリスト (rho, nu, recentness, friendship)
+            children (list): 子のリスト
         """
-        child = np.zeros(4)
-        idx = np.random.randint(4)
-        child[:idx] = parents1[:idx]
-        child[idx:] = parents2[idx:]
-        return child
+        assert len(children) == self.population_size
+        for i in range(self.population_size):
+            if np.random.rand() < self.cross_rate:
+                idx = np.random.randint(4)
+                children[i] = np.concatenate([parents1[i][:idx], parents2[i][idx:]])
+        return children
 
-    def mutation(self, child: list) -> list:
+    def mutation(self, children: list) -> list:
         """突然変異．子のうちランダムに選んだものを突然変異させる．
 
         Args:
-            child (list): 子のリスト
+            children (list): 子のリスト
 
         Returns:
-            child (list): 子のリスト
+            children (list): 子のリスト
         """
-        idx = np.random.randint(4)
-        child[idx] = np.random.uniform(low=self.min_val, high=self.max_val)
-        return child
+        for i in range(self.population_size):
+            if np.random.rand() < self.rate:
+                idx = np.random.randint(4)
+                children[i][idx] = np.random.uniform(low=self.min_val, high=self.max_val)
+        return children
 
     def plot():
         return
@@ -123,17 +142,13 @@ class GA:
         """
         rho = np.random.uniform(low=0, high=30, size=self.population_size)
         nu = np.random.uniform(low=0, high=30, size=self.population_size)
-        recentness = np.random.uniform(
-            low=self.min_val, high=self.max_val, size=self.population_size
-        )
-        friendship = np.random.uniform(
-            low=self.min_val, high=self.max_val, size=self.population_size
-        )
+        recentness = np.random.uniform(low=self.min_val, high=self.max_val, size=self.population_size)
+        friendship = np.random.uniform(low=self.min_val, high=self.max_val, size=self.population_size)
         population = np.array([rho, nu, recentness, friendship]).T
         return population
 
     def run(self) -> Tuple[float, History2VecResult, list]:
-        """GAの実行．
+        """GAの実行を行う．
         Args:
             None
         Returns:
@@ -170,17 +185,7 @@ class GA:
                 fitness[i] = self.fitness_function(self.tovec(self.history, 10))
 
             # 選択
-            parents1 = np.zeros((self.population_size, 4))
-            parents2 = np.zeros((self.population_size, 4))
-            for i in range(self.population_size):
-                weights = 1 / fitness
-                weights /= np.sum(weights)
-                parents1[i] = population[
-                    np.random.choice(self.population_size, p=weights)
-                ]
-                parents2[i] = population[
-                    np.random.choice(self.population_size, p=weights)
-                ]
+            parents1, parents2 = self.selection(population, fitness)
 
             # 最良の個体を残す
             tmp_max_arg = np.argmax(fitness)
@@ -195,14 +200,10 @@ class GA:
                     children[i] = parents2[i]
 
             # 交叉
-            for i in range(self.population_size):
-                if np.random.rand() < self.cross_rate:
-                    children[i] = self.crossover(parents1[i], parents2[i])
+            children = self.crossover(parents1, parents2, children)
 
             # 突然変異
-            for i in range(self.population_size):
-                if np.random.rand() < self.rate:
-                    children[i] = self.mutation(children[i])
+            children = self.mutation(children)
 
             # 次世代へ
             population = children.copy()
@@ -226,10 +227,7 @@ class GA:
 
 
 def main():
-    """main関数．実行時にターゲットデータ（./results/synthetic_fitting_target.csv）を読み込み，GAを実行する．このファイルは`python pca.py`で生成されるので，予め実行しておく必要がある．
-
-    Raises:
-        FileNotFoundError: ターゲットデータが存在しない場合に発生
+    """実行時にターゲットデータを読み込み，それに対して最も適応度の高いパラメータを遺伝的アルゴリズムで探索する．
     """
     # parse arguments
     parser = argparse.ArgumentParser()
@@ -253,9 +251,7 @@ def main():
         format="%(asctime)s %(levelname)s %(message)s",
         filename=f"log/{target_data}_rate_{rate}_population_{population_size}_cross_rate_{cross_rate}.log",
     )
-    logging.info(
-        f"Start GA with population_size={population_size}, rate={rate}, cross_rate={cross_rate}"
-    )
+    logging.info(f"Start GA with population_size={population_size}, rate={rate}, cross_rate={cross_rate}")
 
     # ターゲットデータの読み込み．ターゲットデータ名のバリデーションはシェルスクリプト側で行われている
     fp = f"../data/{target_data}.csv"
