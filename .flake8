@@ -1,0 +1,5 @@
+[flake8]
+max-line-length = 119
+ignore = E203,E266,W503,W504
+max-complexity = 10
+exclude = .git,__pycache__,docs/source/conf.py,dist,venv,.venv,.tox,build

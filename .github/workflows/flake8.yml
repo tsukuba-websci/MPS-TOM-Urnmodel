@@ -1,0 +1,31 @@
+name: reviewdog-flake8
+
+on:
+  pull_request:
+
+jobs:
+  flake8:
+    name: runner / flake8
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          pip install flake8 flake8-docstrings flake8-simplify flake8-unused-arguments flake8-quotes
+
+      - name: flake8 Lint
+        uses: reviewdog/action-flake8@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
