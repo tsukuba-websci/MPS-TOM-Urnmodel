@@ -1,12 +1,10 @@
 import argparse
-import copy
 import csv
+import logging
 import os
 from typing import Any, List, Tuple
-import logging
 
 import numpy as np
-
 from history2vec import History2Vec, History2VecResult, Params
 from io_utils import dump_json, parse_args, validate
 from julia_initializer import JuliaInitializer
@@ -187,10 +185,6 @@ class GA:
             # 選択
             parents1, parents2 = self.selection(population, fitness)
 
-            # 最良の個体を残す
-            tmp_max_arg = np.argmax(fitness)
-            tmp_max_individual = copy.deepcopy(population[tmp_max_arg])
-
             # 親の遺伝子をそのまま子に流しておく
             children = np.zeros((self.population_size, 4))
             for i in range(self.population_size):
@@ -208,9 +202,6 @@ class GA:
             # 次世代へ
             population = children.copy()
 
-            # 最良の個体を残す
-            population[0] = tmp_max_individual
-
             # 結果の表示
             if self.debug:
                 logging.info(
@@ -227,8 +218,7 @@ class GA:
 
 
 def main():
-    """実行時にターゲットデータを読み込み，それに対して最も適応度の高いパラメータを遺伝的アルゴリズムで探索する．
-    """
+    """実行時にターゲットデータを読み込み，それに対して最も適応度の高いパラメータを遺伝的アルゴリズムで探索する．"""
     # parse arguments
     parser = argparse.ArgumentParser()
     args = parse_args(parser)
