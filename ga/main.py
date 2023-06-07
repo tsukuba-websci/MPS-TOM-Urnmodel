@@ -2,10 +2,11 @@ import argparse
 import csv
 import logging
 
-from ga import GA
 from history2vec import History2VecResult
 from io_utils import parse_args, validate
 from julia_initializer import JuliaInitializer
+
+from ga import GA
 
 
 def main():
@@ -70,7 +71,7 @@ def main():
 
     # sort by fitness
     result = sorted(result, key=lambda x: x[0])
-    best_result = result[0]
+    _ = result[0]
 
     # TODO: 出力形式，出力先を変更する
     fp = ""

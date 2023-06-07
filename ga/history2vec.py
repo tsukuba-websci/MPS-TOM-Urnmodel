@@ -31,9 +31,7 @@ class History2Vec:
         self.jl_main = jl_main
         self.thread_num = thread_num
 
-    def history2vec(
-        self, history: List[Tuple[int, int]], interval_num: int
-    ) -> History2VecResult:
+    def history2vec(self, history: List[Tuple[int, int]], interval_num: int) -> History2VecResult:
         # もし履歴が0-originだったら1-originに変換する
         if any(map(lambda row: row[0] == 0 or row[1] == 0, history)):
             history = list(map(lambda row: (row[0] + 1, row[1] + 1), history))
