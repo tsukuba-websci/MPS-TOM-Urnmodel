@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install flake8 flake8-docstrings flake8-simplify flake8-unused-arguments flake8-quotes
+          pip install flake8
 
       - name: flake8 Lint
         uses: reviewdog/action-flake8@v3
