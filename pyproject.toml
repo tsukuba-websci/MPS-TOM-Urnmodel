@@ -1,0 +1,18 @@
+[tool.black]
+line-length = 119
+exclude = '''
+(
+    | .git
+    | .github
+    | .mypy_cache
+    | .pytest_cache
+    | .tox
+    | venv
+)
+'''
+
+[tool.isort]
+include_trailing_comma = true
+line_length = 119
+multi_line_output = 3
+
