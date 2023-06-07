@@ -1,11 +1,10 @@
 import argparse
 import csv
 import logging
-import os
 
 from ga import GA
 from history2vec import History2VecResult
-from io_utils import dump_json, parse_args, validate
+from io_utils import parse_args, validate
 from julia_initializer import JuliaInitializer
 
 
@@ -72,19 +71,9 @@ def main():
     # sort by fitness
     result = sorted(result, key=lambda x: x[0])
     best_result = result[0]
-    if args.prod:
-        dir_name = "./log"
-        next_idx = 1
-        for f in os.listdir(dir_name):
-            if f.startswith(target_data) and f.endswith(".json"):
-                next_idx += 1
-        fp = f"./log/{target_data}_{next_idx}.json"
-        dump_json(best_result, fp)
-    else:
-        os.makedirs(f"./results/grid_search_{target_data}/rate_{rate}", exist_ok=True)
-        fp = f"./results/grid_search_{target_data}/rate_{rate}/population{population_size}_cross_rate{cross_rate}.json"
-        dump_json(best_result, fp)
 
+    # TODO: 出力形式，出力先を変更する
+    fp = ""
     logging.info(f"Finihsed GA. Result is dumped to {fp}")
 
 
