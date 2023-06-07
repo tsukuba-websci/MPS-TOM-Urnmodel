@@ -1,13 +1,13 @@
 import argparse
+import copy
 import csv
 import os
 from typing import Any, List, Tuple
-import copy
 
 import numpy as np
+from history2vec import History2Vec, History2VecResult, Params
 from io_utils import dump_json, parse_args, validate
 from julia_initializer import JuliaInitializer
-from history2vec import History2VecResult, Params, History2Vec
 from run_model import run_model
 
 

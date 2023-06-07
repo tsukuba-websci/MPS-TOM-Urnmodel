@@ -25,8 +25,8 @@ class History2VecResult(NamedTuple):
 
 
 class History2Vec:
-    """相互やり取りの履歴から10この指標を計算する．実態はJulia実装history2vec.jlを呼び出すラッパー．
-    """
+    """相互やり取りの履歴から10この指標を計算する．実態はJulia実装history2vec.jlを呼び出すラッパー．"""
+
     def __init__(self, jl_main: Any, thread_num: int = 1):
         self.jl_main = jl_main
         self.thread_num = thread_num
