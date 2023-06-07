@@ -3,8 +3,10 @@ import copy
 import csv
 import os
 from typing import Any, List, Tuple
+import logging
 
 import numpy as np
+
 from history2vec import History2Vec, History2VecResult, Params
 from io_utils import dump_json, parse_args, validate
 from julia_initializer import JuliaInitializer
@@ -25,6 +27,7 @@ class GA:
         thread_num: int,
         min_val: float = -1.0,
         max_val: float = 1.0,
+        debug: bool = True,
     ) -> None:
         self.population_size = population_size
         self.min_val = min_val
@@ -40,7 +43,7 @@ class GA:
         self.jl_main = jl_main
         self.thread_num = thread_num
         self.history_vec = []
-        self.debug = True
+        self.debug = debug
 
     def tovec(
         self, history: List[Tuple[int, int]], interval_num: int
@@ -209,7 +212,9 @@ class GA:
 
             # 結果の表示
             if self.debug:
-                print(-1 * np.max(fitness))
+                logging.info(
+                    f"Generation {generation}: Best fitness = {np.max(fitness)}, 10 metrics = {self.tovec(self.history, 10)}"
+                )
 
         # 適応度の最小値，ターゲット，最適解，10個の指標を返す
         return (
@@ -242,6 +247,16 @@ def main():
     # Set Up Julia
     jl_main, thread_num = JuliaInitializer().initialize()
 
+    # configure logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(message)s",
+        filename=f"log/{target_data}_rate_{rate}_population_{population_size}_cross_rate_{cross_rate}.log",
+    )
+    logging.info(
+        f"Start GA with population_size={population_size}, rate={rate}, cross_rate={cross_rate}"
+    )
+
     # ターゲットデータの読み込み．ターゲットデータ名のバリデーションはシェルスクリプト側で行われている
     fp = f"../data/{target_data}.csv"
     reader = csv.reader(open(fp, "r"))
@@ -273,23 +288,24 @@ def main():
             thread_num=thread_num,
         )
         res = ga.run()
-        dump_json(res, f"./logs/rho{row[0]}_nu{row[1]}_{row[2]}.json")
         result.append(res)
     # 適応度の最小値でソート（昇順）
     result = sorted(result, key=lambda x: x[0])
     best_result = result[0]
     if args.prod:
-        dir_name = "./logs"
+        dir_name = "./log"
         next_idx = 1
         for f in os.listdir(dir_name):
             if f.startswith(target_data) and f.endswith(".json"):
                 next_idx += 1
-        fp = f"./logs/{target_data}_{next_idx}.json"
+        fp = f"./log/{target_data}_{next_idx}.json"
         dump_json(best_result, fp)
     else:
         os.makedirs(f"./results/grid_search_{target_data}/rate_{rate}", exist_ok=True)
         fp = f"./results/grid_search_{target_data}/rate_{rate}/population{population_size}_cross_rate{cross_rate}.json"
         dump_json(best_result, fp)
+
+    logging.info(f"Finihsed GA. Result is dumped to {fp}")
 
 
 if __name__ == "__main__":
