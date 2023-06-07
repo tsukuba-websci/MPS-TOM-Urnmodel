@@ -46,7 +46,7 @@ class GA:
         self.debug = debug
 
     def tovec(self, history: List[Tuple[int, int]], interval_num: int) -> History2VecResult:
-        """履歴をベクトルに変換する．実際にはQDCoreのhistory2vecを呼び出すラッパーとして振る舞っている
+        """相互やり取りの履歴を10個の指標に変換する．
 
         Args:
             history (List[Tuple[int, int]]): 相互作用履歴
@@ -58,7 +58,7 @@ class GA:
         return History2Vec(self.jl_main, self.thread_num).history2vec(history, interval_num)
 
     def fitness_function(self, history_vec: list) -> float:
-        """適応度計算．とりあえず，目的関数 * -1 を返す．
+        """適応度計算．目的関数 * -1 を返す．
 
         Args:
             history_vec (list): 履歴ベクトル
@@ -148,7 +148,7 @@ class GA:
         return population
 
     def run(self) -> Tuple[float, History2VecResult, list]:
-        """GAの実行．
+        """GAの実行を行う．
         Args:
             None
         Returns:
@@ -227,10 +227,7 @@ class GA:
 
 
 def main():
-    """main関数．実行時にターゲットデータ（./results/synthetic_fitting_target.csv）を読み込み，GAを実行する．このファイルは`python pca.py`で生成されるので，予め実行しておく必要がある．
-
-    Raises:
-        FileNotFoundError: ターゲットデータが存在しない場合に発生
+    """実行時にターゲットデータを読み込み，それに対して最も適応度の高いパラメータを遺伝的アルゴリズムで探索する．
     """
     # parse arguments
     parser = argparse.ArgumentParser()
