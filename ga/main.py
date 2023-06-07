@@ -35,7 +35,7 @@ def main():
     )
     logging.info(f"Start GA with population_size={population_size}, rate={rate}, cross_rate={cross_rate}")
 
-    # ターゲットデータの読み込み．ターゲットデータ名のバリデーションはシェルスクリプト側で行われている
+    # read target data
     fp = f"../data/{target_data}.csv"
     reader = csv.reader(open(fp, "r"))
     _ = next(reader)
@@ -65,9 +65,11 @@ def main():
             jl_main=jl_main,
             thread_num=thread_num,
         )
-        res = ga.run()
-        result.append(res)
-    # 適応度の最小値でソート（昇順）
+
+        min_fitness, target_vec, params, ten_metrics = ga.run()
+        result.append((min_fitness, target_vec, params, ten_metrics))
+
+    # sort by fitness
     result = sorted(result, key=lambda x: x[0])
     best_result = result[0]
     if args.prod:
