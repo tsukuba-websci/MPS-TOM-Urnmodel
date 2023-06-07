@@ -22,12 +22,14 @@ class GA:
         rate: float,
         cross_rate: float,
         target: History2VecResult,
+        target_data: str,
         history: list,
         jl_main: Any,
         thread_num: int,
         min_val: float = -1.0,
         max_val: float = 1.0,
         debug: bool = True,
+        is_grid_search: bool = False,
     ) -> None:
         self.population_size = population_size
         self.min_val = min_val
@@ -39,16 +41,17 @@ class GA:
         # self.num_generations = 500
 
         self.target = target
+        self.target_data = target_data
         self.history = history
         self.jl_main = jl_main
         self.thread_num = thread_num
         self.history_vec = []
+        self.archives_fp = f"./results/{target_data}/{str(len(os.listdir(f'./results/{target_data}'))).zfill(3)}"
         self.debug = debug
+        self.is_grid_search = is_grid_search
 
-    def tovec(
-        self, history: List[Tuple[int, int]], interval_num: int
-    ) -> History2VecResult:
-        """履歴をベクトルに変換する．実際にはQDCoreのhistory2vecを呼び出すラッパーとして振る舞っている
+    def tovec(self, history: List[Tuple[int, int]], interval_num: int) -> History2VecResult:
+        """履歴をベクトルに変換する．実際にはHistry2vec.history2vecを呼び出すラッパーとして振る舞っている
 
         Args:
             history (List[Tuple[int, int]]): 相互作用履歴
@@ -57,9 +60,7 @@ class GA:
         Returns:
             History2VecResult: 履歴ベクトル
         """
-        return History2Vec(self.jl_main, self.thread_num).history2vec(
-            history, interval_num
-        )
+        return History2Vec(self.jl_main, self.thread_num).history2vec(history, interval_num)
 
     def fitness_function(self, history_vec: list) -> float:
         """適応度計算．とりあえず，目的関数 * -1 を返す．
@@ -112,6 +113,22 @@ class GA:
         child[idx] = np.random.uniform(low=self.min_val, high=self.max_val)
         return child
 
+    def dump_population(self, population: list, generation: int, fitness: list) -> None:
+        """個体群をファイルに出力する．
+
+        Args:
+            population (list): 個体群
+            generation (int): 世代数
+            fitness (list): 適応度
+        """
+        os.makedirs(f"{self.archives_fp}/archives", exist_ok=True)
+        fp = f"{self.archives_fp}/archives/{str(generation).zfill(8)}.csv"
+        with open(fp, "w") as f:
+            writer = csv.writer(f)
+            writer.writerow(["rho", "nu", "recentness", "friendship", "fitness"])
+            for individual, fit in zip(population, fitness):
+                writer.writerow([individual[0], individual[1], individual[2], individual[3], fit])
+
     def plot():
         return
 
@@ -123,12 +140,8 @@ class GA:
         """
         rho = np.random.uniform(low=0, high=30, size=self.population_size)
         nu = np.random.uniform(low=0, high=30, size=self.population_size)
-        recentness = np.random.uniform(
-            low=self.min_val, high=self.max_val, size=self.population_size
-        )
-        friendship = np.random.uniform(
-            low=self.min_val, high=self.max_val, size=self.population_size
-        )
+        recentness = np.random.uniform(low=self.min_val, high=self.max_val, size=self.population_size)
+        friendship = np.random.uniform(low=self.min_val, high=self.max_val, size=self.population_size)
         population = np.array([rho, nu, recentness, friendship]).T
         return population
 
@@ -152,6 +165,8 @@ class GA:
         7. 次世代へ
         8. 結果の表示
         """
+        # ディレクトリの作成
+        os.makedirs(self.archives_fp, exist_ok=True)
         population = self.run_init()
         # 世代ごとに進化
         for generation in range(1, self.num_generations + 1):
@@ -175,12 +190,8 @@ class GA:
             for i in range(self.population_size):
                 weights = 1 / fitness
                 weights /= np.sum(weights)
-                parents1[i] = population[
-                    np.random.choice(self.population_size, p=weights)
-                ]
-                parents2[i] = population[
-                    np.random.choice(self.population_size, p=weights)
-                ]
+                parents1[i] = population[np.random.choice(self.population_size, p=weights)]
+                parents2[i] = population[np.random.choice(self.population_size, p=weights)]
 
             # 最良の個体を残す
             tmp_max_arg = np.argmax(fitness)
@@ -215,6 +226,9 @@ class GA:
                 logging.info(
                     f"Generation {generation}: Best fitness = {np.max(fitness)}, 10 metrics = {self.tovec(self.history, 10)}"
                 )
+
+            # 個体群の出力
+            self.dump_population(population, generation, fitness)
 
         # 適応度の最小値，ターゲット，最適解，10個の指標を返す
         return (
@@ -253,9 +267,7 @@ def main():
         format="%(asctime)s %(levelname)s %(message)s",
         filename=f"log/{target_data}_rate_{rate}_population_{population_size}_cross_rate_{cross_rate}.log",
     )
-    logging.info(
-        f"Start GA with population_size={population_size}, rate={rate}, cross_rate={cross_rate}"
-    )
+    logging.info(f"Start GA with population_size={population_size}, rate={rate}, cross_rate={cross_rate}")
 
     # ターゲットデータの読み込み．ターゲットデータ名のバリデーションはシェルスクリプト側で行われている
     fp = f"../data/{target_data}.csv"
@@ -280,6 +292,7 @@ def main():
 
         ga = GA(
             target=target,
+            target_data=target_data,
             population_size=population_size,
             rate=rate,
             cross_rate=cross_rate,
