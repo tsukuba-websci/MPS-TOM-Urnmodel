@@ -98,34 +98,38 @@ class GA:
             parents2[i] = population[np.random.choice(self.population_size, p=weights)]
         return parents1, parents2
 
-    def crossover(self, parents1: list, parents2: list) -> list:
+    def crossover(self, parents1: list, parents2: list, children: list) -> list:
         """交叉．親のうちランダムに選んだものを交叉させる．
 
         Args:
             parents1 (list): 親1 (rho, nu, recentness, friendship) のリスト
             parents2 (list): 親2 (rho, nu, recentness, friendship) のリスト
+            children (list): 子のリスト
 
         Returns:
-            child (list): 子のリスト (rho, nu, recentness, friendship)
+            children (list): 子のリスト
         """
-        child = np.zeros(4)
-        idx = np.random.randint(4)
-        child[:idx] = parents1[:idx]
-        child[idx:] = parents2[idx:]
-        return child
+        assert len(children) == self.population_size
+        for i in range(self.population_size):
+            if np.random.rand() < self.cross_rate:
+                idx = np.random.randint(4)
+                children[i] = np.concatenate([parents1[i][:idx], parents2[i][idx:]])
+        return children
 
-    def mutation(self, child: list) -> list:
+    def mutation(self, children: list) -> list:
         """突然変異．子のうちランダムに選んだものを突然変異させる．
 
         Args:
-            child (list): 子のリスト
+            children (list): 子のリスト
 
         Returns:
-            child (list): 子のリスト
+            children (list): 子のリスト
         """
-        idx = np.random.randint(4)
-        child[idx] = np.random.uniform(low=self.min_val, high=self.max_val)
-        return child
+        for i in range(self.population_size):
+            if np.random.rand() < self.rate:
+                idx = np.random.randint(4)
+                children[i][idx] = np.random.uniform(low=self.min_val, high=self.max_val)
+        return children
 
     def plot():
         return
@@ -196,14 +200,10 @@ class GA:
                     children[i] = parents2[i]
 
             # 交叉
-            for i in range(self.population_size):
-                if np.random.rand() < self.cross_rate:
-                    children[i] = self.crossover(parents1[i], parents2[i])
+            children = self.crossover(parents1, parents2, children)
 
             # 突然変異
-            for i in range(self.population_size):
-                if np.random.rand() < self.rate:
-                    children[i] = self.mutation(children[i])
+            children = self.mutation(children)
 
             # 次世代へ
             population = children.copy()
