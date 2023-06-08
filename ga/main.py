@@ -58,6 +58,7 @@ def main():
 
         ga = GA(
             target=target,
+            target_data=target_data,
             population_size=population_size,
             rate=rate,
             cross_rate=cross_rate,
