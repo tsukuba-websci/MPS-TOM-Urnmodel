@@ -3,7 +3,7 @@ import pickle
 import time
 from argparse import ArgumentParser
 from multiprocessing import Pool
-from typing import Any, Dict, List, NamedTuple, Tuple, Union, cast
+from typing import Any, Dict, List, Tuple, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -11,10 +11,9 @@ import ribs.emitters as emitters
 import ribs.schedulers as schedulers
 from history2bd.main import History2BD
 from ribs.archives import CVTArchive
-from rsurn import Environment, Gene
 from tqdm import tqdm
 
-from lib.history2vec import History2VecResult, QDCore
+from lib.history2vec import History2VecResult
 from lib.julia_initializer import JuliaInitializer
 from lib.run_model import Params, run_model
 
