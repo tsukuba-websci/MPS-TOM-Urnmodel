@@ -198,9 +198,10 @@ class GA:
             # 結果の表示
             if self.debug:
                 arg = np.argmax(fitness)
-                logging.info(
-                    f"Generation {generation}: Best fitness = {-1 * np.max(fitness)}, 10 metrics = {self.tovec(self.histories[arg], 10)}"
-                )
+                best_fitness = -1 * np.max(fitness)
+                metrics = self.tovec(self.histories[arg], 10)
+                message = f"Generation {generation}: Best fitness = {best_fitness}, 10 metrics = {metrics}"
+                logging.info(message)
 
         # 適応度の最小値，ターゲット，最適解，10個の指標を返す
         arg = np.argmax(fitness)
