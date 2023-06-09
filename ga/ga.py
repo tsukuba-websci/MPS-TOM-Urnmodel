@@ -15,7 +15,6 @@ class GA:
         rate: float,
         cross_rate: float,
         target: History2VecResult,
-        history: list,
         jl_main: Any,
         thread_num: int,
         min_val: float = -1.0,
@@ -32,7 +31,7 @@ class GA:
         # self.num_generations = 500
 
         self.target = target
-        self.history = history
+        self.history = []
         self.jl_main = jl_main
         self.thread_num = thread_num
         self.history_vec = []
