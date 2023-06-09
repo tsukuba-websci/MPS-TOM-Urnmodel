@@ -61,7 +61,6 @@ def main():
             population_size=population_size,
             rate=rate,
             cross_rate=cross_rate,
-            history=[],
             jl_main=jl_main,
             thread_num=thread_num,
         )
