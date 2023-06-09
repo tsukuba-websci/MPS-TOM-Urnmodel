@@ -84,6 +84,10 @@ class GA:
         """
         parents1 = np.zeros((self.population_size, 4))
         parents2 = np.zeros((self.population_size, 4))
+        fitness = np.array(fitness)
+        print("---")
+        print(fitness)
+        weights = calc_weights(fitness)
         for i in range(self.population_size):
             weights = 1 / fitness
             weights /= np.sum(weights)
@@ -210,3 +214,23 @@ class GA:
             population[np.argmax(fitness)],
             self.tovec(self.history, 10),
         )
+
+
+def sigmoid(a: float, x: np.ndarray) -> np.ndarray:
+    assert a > 0
+    return 1 / (1 + np.exp(-a * x))
+
+
+def calc_weights(x: np.ndarray) -> np.ndarray:
+    """適応度から重みを計算する．
+    Args:
+        x (np.ndarray): 適応度のリスト
+
+    Returns:
+        weights (np.ndarray): 重みのリスト
+    """
+
+    x = x - np.mean(x)
+    weights = sigmoid(10, x)
+    weights /= np.sum(weights)
+    return weights
