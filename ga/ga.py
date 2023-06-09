@@ -26,9 +26,7 @@ class GA:
         self.max_val = max_val
         self.rate = rate
         self.cross_rate = cross_rate
-        # FIXME: 一旦デバッグのために10にする
-        self.num_generations = 10
-        # self.num_generations = 500
+        self.num_generations = 500
 
         self.target = target
         self.jl_main = jl_main
@@ -83,8 +81,6 @@ class GA:
         parents1 = np.zeros((self.population_size, 4))
         parents2 = np.zeros((self.population_size, 4))
         fitness = np.array(fitness)
-        print("---")
-        print(fitness)
         weights = calc_weights(fitness)
         for i in range(self.population_size):
             parents1[i] = population[np.random.choice(self.population_size, p=weights)]
@@ -172,10 +168,10 @@ class GA:
                     nu=population[i][1],
                     recentness=population[i][2],
                     friendship=population[i][3],
-                    steps=100,
+                    steps=20000,
                 )
                 self.histories[i] = run_model(params)
-                fitness[i] = self.fitness_function(self.tovec(self.histories[i], 10))
+                fitness[i] = self.fitness_function(self.tovec(self.histories[i], 1000))
 
             # 選択
             parents1, parents2 = self.selection(population, fitness)
@@ -201,8 +197,9 @@ class GA:
             if self.debug:
                 arg = np.argmax(fitness)
                 best_fitness = -1 * np.max(fitness)
+                best_params = population[arg]
                 metrics = self.tovec(self.histories[arg], 10)
-                message = f"Generation {generation}: Best fitness = {best_fitness}, 10 metrics = {metrics}"
+                message = f"Generation {generation}: Best fitness = {best_fitness}, Best params = {best_params}, 10Metrics = {metrics}"
                 logging.info(message)
 
         # 適応度の最小値，ターゲット，最適解，10個の指標を返す
@@ -230,6 +227,6 @@ def calc_weights(x: np.ndarray) -> np.ndarray:
     """
 
     x = x - np.mean(x)
-    weights = sigmoid(10, x)
+    weights = sigmoid(5, x)
     weights /= np.sum(weights)
     return weights

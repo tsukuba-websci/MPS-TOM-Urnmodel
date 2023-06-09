@@ -44,16 +44,16 @@ def main():
         if len(row) < 10:
             raise ValueError("Invalid target data.")
         target = History2VecResult(
-            gamma=float(row[-10]),
-            no=float(row[-9]),
-            nc=float(row[-8]),
-            oo=float(row[-7]),
-            oc=float(row[-6]),
-            c=float(row[-5]),
-            y=float(row[-4]),
-            g=float(row[-3]),
-            r=float(row[-2]),
-            h=float(row[-1]),
+            gamma=float(row[0]),
+            c=float(row[1]),
+            oc=float(row[2]),
+            oo=float(row[3]),
+            nc=float(row[4]),
+            no=float(row[5]),
+            y=float(row[6]),
+            r=float(row[7]),
+            h=float(row[8]),
+            g=float(row[9]),
         )
 
         ga = GA(
