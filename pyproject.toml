@@ -16,3 +16,19 @@ include_trailing_comma = true
 line_length = 119
 multi_line_output = 3
 
+[tool.poetry]
+name = "lib"
+version = "0.1.0"
+description = ""
+authors = ["Nanami <88866882+krmr73@users.noreply.github.com>"]
+readme = "README.md"
+packages = [
+    { include = "lib" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
