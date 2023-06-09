@@ -82,9 +82,9 @@ class GA:
         """
         parents1 = np.zeros((self.population_size, 4))
         parents2 = np.zeros((self.population_size, 4))
+        weights = 1 / fitness
+        weights /= np.sum(weights)
         for i in range(self.population_size):
-            weights = 1 / fitness
-            weights /= np.sum(weights)
             parents1[i] = population[np.random.choice(self.population_size, p=weights)]
             parents2[i] = population[np.random.choice(self.population_size, p=weights)]
         return parents1, parents2
