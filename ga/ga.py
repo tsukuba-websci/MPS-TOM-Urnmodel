@@ -31,10 +31,9 @@ class GA:
         # self.num_generations = 500
 
         self.target = target
-        self.history = []
         self.jl_main = jl_main
         self.thread_num = thread_num
-        self.history_vec = []
+        self.histories = [[] for _ in range(self.population_size)]
         self.debug = debug
 
     def tovec(self, history: List[Tuple[int, int]], interval_num: int) -> History2VecResult:
@@ -173,8 +172,8 @@ class GA:
                     friendship=population[i][3],
                     steps=100,
                 )
-                self.history = run_model(params)
-                fitness[i] = self.fitness_function(self.tovec(self.history, 10))
+                self.histories[i] = run_model(params)
+                fitness[i] = self.fitness_function(self.tovec(self.histories[i], 10))
 
             # 選択
             parents1, parents2 = self.selection(population, fitness)
@@ -198,14 +197,16 @@ class GA:
 
             # 結果の表示
             if self.debug:
+                arg = np.argmax(fitness)
                 logging.info(
-                    f"Generation {generation}: Best fitness = {np.max(fitness)}, 10 metrics = {self.tovec(self.history, 10)}"
+                    f"Generation {generation}: Best fitness = {-1 * np.max(fitness)}, 10 metrics = {self.tovec(self.histories[arg], 10)}"
                 )
 
         # 適応度の最小値，ターゲット，最適解，10個の指標を返す
+        arg = np.argmax(fitness)
         return (
             -1 * np.max(fitness),
             self.target,
-            population[np.argmax(fitness)],
-            self.tovec(self.history, 10),
+            population[arg],
+            self.tovec(self.histories[arg], 10),
         )
