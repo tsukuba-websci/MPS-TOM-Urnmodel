@@ -49,27 +49,27 @@ class GA:
         """
         return History2Vec(self.jl_main, self.thread_num).history2vec(history, interval_num)
 
-    def fitness_function(self, history_vec: list) -> float:
+    def fitness_function(self, history: list) -> float:
         """適応度計算．目的関数 * -1 を返す．
 
         Args:
-            history_vec (list): 履歴ベクトル
+            history (list): 履歴ベクトル
 
         Returns:
             float: 適応度
         """
-        return -1 * self.objective_function(history_vec)
+        return -1 * self.objective_function(history)
 
-    def objective_function(self, history_vec: list) -> float:
+    def objective_function(self, history: list) -> float:
         """目的関数．ターゲットとの差の絶対値の和を返す．
 
         Args:
-            history_vec (list): 履歴ベクトル
+            history (list): 履歴ベクトル
 
         Returns:
             float: 目的関数の値
         """
-        return np.sum(np.abs(np.array(history_vec) - np.array(self.target)))
+        return np.sum(np.abs(np.array(history) - np.array(self.target)))
 
     def selection(self, population: list, fitness: list) -> list:
         """ルーレット選択．適応度に比例した確率で個体を選択し，親個体にする．この親個体を用いて交叉を行う．
