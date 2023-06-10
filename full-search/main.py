@@ -87,7 +87,7 @@ class FullSearch:
 if __name__ == "__main__":
     rhos = list(range(1, 20 + 1))
     nus = list(range(1, 20 + 1))
-    outfile = "synthetic"
+    outfile = "full-search"
 
     runner = FullSearch(outfile, rhos, nus)
     runner.run()
