@@ -3,7 +3,7 @@ import pickle
 import time
 from argparse import ArgumentParser
 from multiprocessing import Pool
-from typing import Any, Dict, List, Tuple, Union, cast
+from typing import Any, Dict, List, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -13,7 +13,7 @@ from history2bd.main import History2BD
 from ribs.archives import CVTArchive
 from tqdm import tqdm
 
-from lib.history2vec import History2VecResult
+from lib.history2vec import History2Vec, History2VecResult
 from lib.julia_initializer import JuliaInitializer
 from lib.run_model import Params, run_model
 
@@ -46,37 +46,6 @@ class QualityDiversitySearch:
         self.archives_dir_path = f"{result_dir}/archives"
 
         os.makedirs(self.archives_dir_path, exist_ok=True)
-
-    def __history2vec_parallel(
-        self, histories: List[List[Tuple[int, int]]], interval_num: int
-    ) -> List[History2VecResult]:
-        def zero_originize(h: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
-            if any(map(lambda row: row[0] == 0 or row[1] == 0, h)):
-                return list(map(lambda row: (row[0] + 1, row[1] + 1), h))
-            return h
-
-        histories = list(map(zero_originize, histories))
-        # もし履歴が0-originだったら1-originに変換する
-        # histories = list(map(lambda h:
-
-        nts: List[Any] = self.jl_main.history2vec_parallel(histories, interval_num)
-        return list(
-            map(
-                lambda nt: History2VecResult(
-                    c=nt.c,
-                    g=nt.g,
-                    gamma=nt.gamma,
-                    h=nt.h,
-                    nc=nt.nc,
-                    no=nt.no,
-                    oc=nt.oc,
-                    oo=nt.oo,
-                    r=nt.r,
-                    y=nt.y,
-                ),
-                nts,
-            )
-        )
 
     def run(self):
         self.jl_main, self.thread_num = JuliaInitializer().initialize()
@@ -138,7 +107,7 @@ class QualityDiversitySearch:
             with Pool(self.thread_num) as pool:
                 histories = pool.map(run_model, params_list)
 
-            history_vecs = self.__history2vec_parallel(histories, 1000)
+            history_vecs = History2Vec(self.jl_main, self.thread_num).history2vec_parallel(histories, 1000)
 
             bcs = self.history2bd.run(histories)
 
