@@ -13,7 +13,7 @@ Contains the source code to perform a parameter search of the urn-model using th
 Parameter search by genetic algorithm is carried out in the following steps:
 
 1. randomly generate a population with a vector representing the parameters: `(rho, nu, friendship, recentness)` for each individual.
-2. run the pot model based on the parameters, calculate the goodness of fit from the results and record this
+2. run the urn-model based on the parameters, calculate the goodness of fit from the results and record this
 3. perform an evolutionary calculation of the population based on the goodness of fit
     a. Select individuals with high goodness of fit and perform crossover
     b. Perform mutations with a certain probability
