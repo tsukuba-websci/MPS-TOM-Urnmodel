@@ -2,6 +2,7 @@ import argparse
 import csv
 import logging
 import os
+from typing import Any
 
 from history2vec import History2VecResult
 from io_utils import parse_args, validate
@@ -10,40 +11,26 @@ from julia_initializer import JuliaInitializer
 from ga import GA
 
 
-def main():
-    """実行時にターゲットデータを読み込み，それに対して最も適応度の高いパラメータを遺伝的アルゴリズムで探索する．"""
-    # parse arguments
-    parser = argparse.ArgumentParser()
-    args = parse_args(parser)
+def run(
+    reader: csv.reader,
+    target_data: str,
+    population_size: int,
+    mutation_rate: float,
+    cross_rate: float,
+    jl_main: Any,
+    thread_num: int,
+) -> list:
+    """GAを実行する．
 
-    population_size, mutation_rate, cross_rate = (
-        args.population_size,
-        args.mutation_rate,
-        args.cross_rate,
-    )
-    validate(population_size, mutation_rate, cross_rate)
-
-    target_data = args.target_data
-
-    # Set Up Julia
-    jl_main, thread_num = JuliaInitializer().initialize()
-
-    # configure logging
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(message)s",
-        filename=f"log/{target_data}_mutation_rate_{mutation_rate}_population_{population_size}_cross_rate_{cross_rate}.log",
-    )
-    logging.info(f"Start GA with population_size={population_size}, mutation_rate={mutation_rate}, cross_rate={cross_rate}")
-
-    # setting output directory
-    fp = f"./results/{target_data}/"
-    os.makedirs(fp, exist_ok=True)
-
-    # read target data
-    fp = f"../data/{target_data}.csv"
-    reader = csv.reader(open(fp, "r"))
-    _ = next(reader)
+    Args:
+        reader (csv.reader): CSVリーダー
+        target_data (str): ターゲットデータ
+        population_size (int): 個体数
+        mutation_rate (float): 突然変異率
+        cross_rate (float): 交叉率
+        jl_main (Any): Juliaのmain関数
+        thread_num (int): Juliaのスレッド数
+    """
     result = []
     for row in reader:
         if len(row) < 10:
@@ -76,7 +63,55 @@ def main():
 
     # sort by fitness
     result = sorted(result, key=lambda x: x[0])
-    _ = result[0]
+
+    return result
+
+
+def main():
+    """実行時にターゲットデータを読み込み，それに対して最も適応度の高いパラメータを遺伝的アルゴリズムで探索する．"""
+    # parse arguments
+    parser = argparse.ArgumentParser()
+    args = parse_args(parser)
+
+    population_size, mutation_rate, cross_rate = (
+        args.population_size,
+        args.mutation_rate,
+        args.cross_rate,
+    )
+    validate(population_size, mutation_rate, cross_rate)
+
+    target_data = args.target_data
+
+    # Set Up Julia
+    jl_main, thread_num = JuliaInitializer().initialize()
+
+    # configure logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(message)s",
+        filename=f"log/{target_data}_mutation_rate_{mutation_rate}_population_{population_size}_cross_rate_{cross_rate}.log",
+    )
+    logging.info(
+        f"Start GA with population_size={population_size}, mutation_rate={mutation_rate}, cross_rate={cross_rate}"
+    )
+
+    # setting output directory
+    output_dir = f"./results/{target_data}/"
+    os.makedirs(output_dir, exist_ok=True)
+
+    # read target data
+    fp = f"../data/{target_data}.csv"
+    reader = csv.reader(open(fp, "r"))
+    _ = next(reader)
+    result = run(
+        reader=reader,
+        target_data=target_data,
+        population_size=population_size,
+        mutation_rate=mutation_rate,
+        cross_rate=cross_rate,
+        jl_main=jl_main,
+        thread_num=thread_num,
+    )
 
     # TODO: 出力形式，出力先を変更する
 
