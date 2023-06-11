@@ -1,6 +1,5 @@
 import csv
 import logging
-import os
 from typing import Any, List, Tuple
 
 import numpy as np
@@ -136,13 +135,12 @@ class GA:
             generation (int): 世代数
             fitness (list): 適応度
         """
-        os.makedirs(f"{self.archives_fp}/archives", exist_ok=True)
         fp = f"{self.archives_fp}/archives/{str(generation).zfill(8)}.csv"
         with open(fp, "w") as f:
             writer = csv.writer(f)
-            writer.writerow(["rho", "nu", "recentness", "friendship", "fitness"])
+            writer.writerow(["rho", "nu", "recentness", "friendship", "objective"])
             for individual, fit in zip(population, fitness):
-                writer.writerow([individual[0], individual[1], individual[2], individual[3], fit])
+                writer.writerow([individual[0], individual[1], individual[2], individual[3], -1 * fit])
 
     def plot():
         return
@@ -180,8 +178,6 @@ class GA:
         7. 次世代へ
         8. 結果の表示
         """
-        # ディレクトリの作成
-        os.makedirs(self.archives_fp, exist_ok=True)
         population = self.run_init()
         # 世代ごとに進化
         for generation in range(1, self.num_generations + 1):
