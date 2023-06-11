@@ -33,10 +33,10 @@ def export_individual(distance: float, individual: list, fpath: str) -> None:
 
     Args:
         distance (float): ターゲットとの距離
-        individual (list): 個体を表すタプル．(rho, nu, recentness, friendship)の順
+        individual (list): 個体を表すタプル．(rho, nu, recentness, frequency)の順
         fpath (str): 出力先のパス
     """
-    header = ["rho", "nu", "recentness", "friendship", "objective"]
+    header = ["rho", "nu", "recentness", "frequency", "objective"]
     objective = distance
     row = [*individual, objective]
     with open(fpath, "w") as f:
@@ -58,7 +58,7 @@ def dump_json(result: tuple, fpath: str) -> None:
             "rho": result[2][0],
             "nu": result[2][1],
             "recentness": result[2][2],
-            "friendship": result[2][3],
+            "frequency": result[2][3],
         },
         "target": {},
         "result": {},

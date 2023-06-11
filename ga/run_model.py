@@ -1,16 +1,7 @@
-from dataclasses import dataclass
 from typing import List, Tuple
 
 from rsurn import Environment, Gene
-
-
-@dataclass
-class Params:
-    rho: float
-    nu: float
-    recentness: float
-    friendship: float
-    steps: int
+from history2vec import Params
 
 
 def run_model(params: Params) -> List[Tuple[int, int]]:
@@ -24,7 +15,7 @@ def run_model(params: Params) -> List[Tuple[int, int]]:
     """
     rho = int(params.rho)
     nu = int(params.nu)
-    gene = Gene(rho, nu, params.recentness, params.friendship)
+    gene = Gene(rho, nu, params.recentness, params.frequency)
     env = Environment(gene)
     for _ in range(params.steps):
         caller = env.get_caller()

@@ -80,7 +80,7 @@ class GA:
         """ルーレット選択．適応度に比例した確率で個体を選択し，親個体にする．この親個体を用いて交叉を行う．
 
         Args:
-            population (list): 各個体のパラメータ (rho, nu, recentness, friendship) のリスト
+            population (list): 各個体のパラメータ (rho, nu, recentness, frequency) のリスト
             fitness (list): 各個体の適応度
 
         Returns:
@@ -99,8 +99,8 @@ class GA:
         """交叉．親のうちランダムに選んだものを交叉させる．
 
         Args:
-            parents1 (list): 親1 (rho, nu, recentness, friendship) のリスト
-            parents2 (list): 親2 (rho, nu, recentness, friendship) のリスト
+            parents1 (list): 親1 (rho, nu, recentness, frequency) のリスト
+            parents2 (list): 親2 (rho, nu, recentness, frequency) のリスト
             children (list): 子のリスト
 
         Returns:
@@ -139,7 +139,7 @@ class GA:
         fp = f"{self.archives_dir}/{str(generation).zfill(8)}.csv"
         with open(fp, "w") as f:
             writer = csv.writer(f)
-            writer.writerow(["rho", "nu", "recentness", "friendship", "objective"])
+            writer.writerow(["rho", "nu", "recentness", "frequency", "objective"])
             for individual, fit in zip(population, fitness):
                 writer.writerow([individual[0], individual[1], individual[2], individual[3], -1 * fit])
 
@@ -150,13 +150,13 @@ class GA:
         """GAの初期個体群を生成する．
 
         Returns:
-            population (list): 初期個体群 (rho, nu, recentness, friendship) のリスト
+            population (list): 初期個体群 (rho, nu, recentness, frequency) のリスト
         """
         rho = np.random.uniform(low=0, high=30, size=self.population_size)
         nu = np.random.uniform(low=0, high=30, size=self.population_size)
         recentness = np.random.uniform(low=self.min_val, high=self.max_val, size=self.population_size)
-        friendship = np.random.uniform(low=self.min_val, high=self.max_val, size=self.population_size)
-        population = np.array([rho, nu, recentness, friendship]).T
+        frequency = np.random.uniform(low=self.min_val, high=self.max_val, size=self.population_size)
+        population = np.array([rho, nu, recentness, frequency]).T
         return population
 
     def run(self) -> Tuple[float, History2VecResult, list]:
@@ -190,7 +190,7 @@ class GA:
                     rho=population[i][0],
                     nu=population[i][1],
                     recentness=population[i][2],
-                    friendship=population[i][3],
+                    frequency=population[i][3],
                     steps=20000,
                 )
                 self.histories[i] = run_model(params)
