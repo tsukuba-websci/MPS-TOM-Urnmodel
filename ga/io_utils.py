@@ -1,6 +1,7 @@
 import argparse
 import csv
 import json
+import os
 
 
 def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
@@ -67,6 +68,18 @@ def dump_json(result: tuple, fpath: str) -> None:
         res["result"][field] = getattr(result[3], field)
 
     json.dump(res, open(fpath, "w"), indent=4)
+
+
+def pass_run(force, fpath) -> bool:
+    """GAの実行をスキップするかどうかを判定する．forceがFalseかつすでに結果が存在する場合にTrueを返す．
+
+    Args:
+        force (bool): 既存のファイルを上書きするかどうか
+        fpath (str): 出力先のパス
+    """
+    if force:
+        return False
+    return os.path.exists(fpath)
 
 
 def validate(population_size, rate, cross_rate) -> None:

@@ -5,10 +5,21 @@ import os
 from typing import Any
 
 from history2vec import History2VecResult
-from io_utils import export_individual, parse_args, validate
+from io_utils import export_individual, parse_args, validate, pass_run
 from julia_initializer import JuliaInitializer
 
 from ga import GA
+
+
+def config_logging(target_data: str, mutation_rate: float, population_size: int, cross_rate: float):
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(message)s",
+        filename=f"log/{target_data}_mutation_rate_{mutation_rate}_population_{population_size}_cross_rate_{cross_rate}.log",
+    )
+    logging.info(
+        f"Start GA with population_size={population_size}, mutation_rate={mutation_rate}, cross_rate={cross_rate}"
+    )
 
 
 def run(
@@ -88,22 +99,25 @@ def main():
 
     target_data = args.target_data
 
-    # Set Up Julia
-    jl_main, thread_num = JuliaInitializer().initialize()
-
     # configure logging
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(message)s",
-        filename=f"log/{target_data}_mutation_rate_{mutation_rate}_population_{population_size}_cross_rate_{cross_rate}.log",
-    )
-    logging.info(
-        f"Start GA with population_size={population_size}, mutation_rate={mutation_rate}, cross_rate={cross_rate}"
-    )
+    config_logging(target_data, mutation_rate, population_size, cross_rate)
 
     # setting output directory
     output_base_dir = f"./results/{target_data}"
     os.makedirs(os.path.join(output_base_dir, "archives"), exist_ok=True)
+    output_fp = os.path.join(output_base_dir, "best.csv")
+
+    # check if the run is already finished
+    if pass_run(args.force, output_fp):
+        logging.info("GA is skipped.")
+        print("GA search is skipped. Use --force option to run GA.")
+        return
+    elif args.force:
+        print("GA is forced to run. This may overwrite existing result.")
+        logging.warning("GA is forced to run.")
+
+    # Set Up Julia
+    jl_main, thread_num = JuliaInitializer().initialize()
 
     # read target data
     fp = f"../data/{target_data}.csv"
@@ -120,7 +134,6 @@ def main():
         archive_dir=os.path.join(output_base_dir, "archives"),
     )
 
-    output_fp = os.path.join(output_base_dir, "best.csv")
     export_individual(min_distance, best_individual, output_fp)
 
     logging.info(f"Finihsed GA. Result is dumped to {fp}")
