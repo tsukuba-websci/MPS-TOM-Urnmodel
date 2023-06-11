@@ -27,19 +27,21 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
     return args
 
 
-def export_individual(individual: list, metrics: list, fpath: str) -> None:
+def export_individual(distance: float, individual: list, fpath: str) -> None:
     """個体をCSVファイルに出力する．
 
     Args:
-        individual (list): 個体を表すリスト．(rho, nu, recentness, friendship)の順
-        metrics (list): 10この指標．(gamma, c, oc, oo, nc, no, y, r, h, g)の順
+        distance (float): ターゲットとの距離
+        individual (list): 個体を表すタプル．(rho, nu, recentness, friendship)の順
         fpath (str): 出力先のパス
     """
-    header = ["rho", "nu", "recentness", "friendship", "gamma", "c", "oc", "oo", "nc", "no", "y", "r", "h", "g"]
+    header = ["rho", "nu", "recentness", "friendship", "objective"]
+    objective = distance
+    row = [*individual, objective]
     with open(fpath, "w") as f:
         writer = csv.writer(f)
         writer.writerow(header)
-        writer.writerow(individual + metrics)
+        writer.writerow(row)
 
 
 def dump_json(result: tuple, fpath: str) -> None:
