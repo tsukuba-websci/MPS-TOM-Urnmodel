@@ -1,4 +1,5 @@
 import argparse
+import csv
 import json
 
 
@@ -24,6 +25,21 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
     parser.add_argument("-f", "--force", action="store_true", default=False, help="既存のファイルを上書きする．")
     args = parser.parse_args()
     return args
+
+
+def export_individual(individual: list, metrics: list, fpath: str) -> None:
+    """個体をCSVファイルに出力する．
+
+    Args:
+        individual (list): 個体を表すリスト．(rho, nu, recentness, friendship)の順
+        metrics (list): 10この指標．(gamma, c, oc, oo, nc, no, y, r, h, g)の順
+        fpath (str): 出力先のパス
+    """
+    header = ["rho", "nu", "recentness", "friendship", "gamma", "c", "oc", "oo", "nc", "no", "y", "r", "h", "g"]
+    with open(fpath, "w") as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        writer.writerow(individual + metrics)
 
 
 def dump_json(result: tuple, fpath: str) -> None:
