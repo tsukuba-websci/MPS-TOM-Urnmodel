@@ -5,7 +5,7 @@ import os
 from typing import Any
 
 from history2vec import History2VecResult
-from io_utils import parse_args, validate
+from io_utils import export_individual, parse_args, validate
 from julia_initializer import JuliaInitializer
 
 from ga import GA
@@ -20,7 +20,7 @@ def run(
     jl_main: Any,
     thread_num: int,
 ) -> list:
-    """GAを実行する．
+    """GAを実行し，最も適応度の高い個体の適応度，履歴ベクトル，パラメータ，10個の指標を返す．
 
     Args:
         reader (csv.reader): CSVリーダー
@@ -30,6 +30,9 @@ def run(
         cross_rate (float): 交叉率
         jl_main (Any): Juliaのmain関数
         thread_num (int): Juliaのスレッド数
+
+    Returns:
+        list: 最も適応度の高い個体の適応度，履歴ベクトル，パラメータ，10個の指標
     """
     result = []
     for row in reader:
@@ -63,8 +66,8 @@ def run(
 
     # sort by fitness
     result = sorted(result, key=lambda x: x[0])
-
-    return result
+    min_distance, target, best_individual, metrics = result[0]
+    return min_distance, target, best_individual, metrics
 
 
 def main():
@@ -103,7 +106,7 @@ def main():
     fp = f"../data/{target_data}.csv"
     reader = csv.reader(open(fp, "r"))
     _ = next(reader)
-    result = run(
+    min_distance, _, best_individual, _ = run(
         reader=reader,
         target_data=target_data,
         population_size=population_size,
@@ -113,7 +116,8 @@ def main():
         thread_num=thread_num,
     )
 
-    # TODO: 出力形式，出力先を変更する
+    output_fp = os.path.join(output_dir, "best.csv")
+    export_individual(min_distance, best_individual, output_fp)
 
     logging.info(f"Finihsed GA. Result is dumped to {fp}")
 
