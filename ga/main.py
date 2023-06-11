@@ -1,6 +1,7 @@
 import argparse
 import csv
 import logging
+import os
 
 from history2vec import History2VecResult
 from io_utils import parse_args, validate
@@ -34,6 +35,10 @@ def main():
         filename=f"log/{target_data}_mutation_rate_{mutation_rate}_population_{population_size}_cross_rate_{cross_rate}.log",
     )
     logging.info(f"Start GA with population_size={population_size}, mutation_rate={mutation_rate}, cross_rate={cross_rate}")
+
+    # setting output directory
+    fp = f"./results/{target_data}/"
+    os.makedirs(fp, exist_ok=True)
 
     # read target data
     fp = f"../data/{target_data}.csv"
@@ -74,7 +79,7 @@ def main():
     _ = result[0]
 
     # TODO: 出力形式，出力先を変更する
-    fp = ""
+
     logging.info(f"Finihsed GA. Result is dumped to {fp}")
 
 

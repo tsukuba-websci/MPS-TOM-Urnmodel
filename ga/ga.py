@@ -1,7 +1,6 @@
-import os
 import csv
-
 import logging
+import os
 from typing import Any, List, Tuple
 
 import numpy as np
@@ -23,7 +22,7 @@ class GA:
         thread_num: int,
         min_val: float = -1.0,
         max_val: float = 1.0,
-        num_generations: int = 500,
+        num_generations: int = 5,
         debug: bool = True,
         is_grid_search: bool = False,
     ) -> None:
@@ -39,7 +38,7 @@ class GA:
         self.jl_main = jl_main
         self.thread_num = thread_num
         self.histories = [[] for _ in range(self.population_size)]
-        self.archives_fp = f"./results/{target_data}/{str(len(os.listdir(f'./results/{target_data}'))).zfill(3)}"
+        self.archives_fp = f"./results/{target_data}"
         self.debug = debug
         self.is_grid_search = is_grid_search
 
