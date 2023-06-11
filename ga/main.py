@@ -19,6 +19,7 @@ def run(
     cross_rate: float,
     jl_main: Any,
     thread_num: int,
+    archive_dir: str,
 ) -> list:
     """GAを実行し，最も適応度の高い個体の適応度，履歴ベクトル，パラメータ，10個の指標を返す．
 
@@ -30,6 +31,7 @@ def run(
         cross_rate (float): 交叉率
         jl_main (Any): Juliaのmain関数
         thread_num (int): Juliaのスレッド数
+        archive_dir (str): アーカイブの出力先
 
     Returns:
         list: 最も適応度の高い個体の適応度，履歴ベクトル，パラメータ，10個の指標
@@ -59,6 +61,7 @@ def run(
             cross_rate=cross_rate,
             jl_main=jl_main,
             thread_num=thread_num,
+            archive_dir=archive_dir,
         )
 
         min_fitness, target_vec, params, ten_metrics = ga.run()
@@ -99,8 +102,8 @@ def main():
     )
 
     # setting output directory
-    output_dir = f"./results/{target_data}/"
-    os.makedirs(output_dir, exist_ok=True)
+    output_base_dir = f"./results/{target_data}"
+    os.makedirs(os.path.join(output_base_dir, "archives"), exist_ok=True)
 
     # read target data
     fp = f"../data/{target_data}.csv"
@@ -114,9 +117,10 @@ def main():
         cross_rate=cross_rate,
         jl_main=jl_main,
         thread_num=thread_num,
+        archive_dir=os.path.join(output_base_dir, "archives"),
     )
 
-    output_fp = os.path.join(output_dir, "best.csv")
+    output_fp = os.path.join(output_base_dir, "best.csv")
     export_individual(min_distance, best_individual, output_fp)
 
     logging.info(f"Finihsed GA. Result is dumped to {fp}")

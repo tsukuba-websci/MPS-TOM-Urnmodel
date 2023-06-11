@@ -19,6 +19,7 @@ class GA:
         target_data: str,
         jl_main: Any,
         thread_num: int,
+        archive_dir: str,
         min_val: float = -1.0,
         max_val: float = 1.0,
         num_generations: int = 5,
@@ -37,7 +38,7 @@ class GA:
         self.jl_main = jl_main
         self.thread_num = thread_num
         self.histories = [[] for _ in range(self.population_size)]
-        self.archives_fp = f"./results/{target_data}"
+        self.archives_dir = archive_dir
         self.debug = debug
         self.is_grid_search = is_grid_search
 
@@ -135,7 +136,7 @@ class GA:
             generation (int): 世代数
             fitness (list): 適応度
         """
-        fp = f"{self.archives_fp}/archives/{str(generation).zfill(8)}.csv"
+        fp = f"{self.archives_dir}/{str(generation).zfill(8)}.csv"
         with open(fp, "w") as f:
             writer = csv.writer(f)
             writer.writerow(["rho", "nu", "recentness", "friendship", "objective"])
