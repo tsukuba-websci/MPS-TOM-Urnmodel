@@ -4,7 +4,7 @@
 
 ## Overview
 
-Contains a set of source code to perform parameter search of the urn-model using the Genetic Algorithm (GA).
+Contains the source code to perform a parameter search of the urn-model using the Genetic Algorithm (GA).
 
 ## What is actually done
 
