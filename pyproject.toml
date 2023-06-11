@@ -35,6 +35,7 @@ tqdm = "^4.65.0"
 rsurn = {git = "https://github.com/tsukuba-websci/rsurn", rev = "69c588ec018d3a7cd38e3f98dbb5417cdcdec172"}
 julia = "0.6.0"
 sklearn = "^0.0.post5"
+matplotlib = "^3.7.1"
 
 [build-system]
 requires = ["poetry-core"]
