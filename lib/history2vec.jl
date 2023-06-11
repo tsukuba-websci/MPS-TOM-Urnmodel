@@ -14,3 +14,17 @@ function history2vec(history::Vector{Tuple{Int,Int}}, interval_num::Int)
     h = mean(calc_local_entropy(history, tau))
     return (; gamma, no, nc, oo, oc, c, y, g, r, h)
 end
+
+function history2vec_parallel(histories::Matrix{Tuple{Int,Int}}, interval_num::Int)
+    ret = Vector{NamedTuple}(undef, size(histories, 1))
+
+    lk = ReentrantLock()
+    Threads.@threads for index in axes(histories, 1)
+      v = history2vec(histories[index, :], interval_num)
+      lock(lk) do
+        ret[index] = v
+      end
+    end
+
+    return ret
+  end

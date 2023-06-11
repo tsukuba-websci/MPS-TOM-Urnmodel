@@ -6,7 +6,6 @@ from typing import List, Tuple, Union, cast
 import networkx as nx
 import numpy.typing as npt
 from karateclub.graph_embedding import Graph2Vec
-from matplotlib import pyplot as plt
 from sklearn.preprocessing import StandardScaler
 
 History = List[Tuple[int, int]]
@@ -52,9 +51,7 @@ class History2BD:
 
         G: List[nx.Graph] = []
         if isinstance(history[0], list):
-            G += list(
-                map(lambda h: cast(nx.Graph, nx.from_edgelist(h)), history)
-            )
+            G += list(map(lambda h: cast(nx.Graph, nx.from_edgelist(h)), history))
         else:
             G.append(cast(nx.Graph, nx.from_edgelist(history)))
 

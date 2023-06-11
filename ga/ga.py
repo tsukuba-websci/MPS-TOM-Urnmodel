@@ -32,16 +32,14 @@ class GA:
         self.max_val = max_val
         self.rate = rate
         self.cross_rate = cross_rate
-        # FIXME: 一旦デバッグのために10にする
-        self.num_generations = 10
-        # self.num_generations = 500
+        self.num_generations = 500
 
         self.target = target
         self.target_data = target_data
         self.history = history
         self.jl_main = jl_main
         self.thread_num = thread_num
-        self.history_vec = []
+        self.histories = [[] for _ in range(self.population_size)]
         self.archives_fp = f"./results/{target_data}/{str(len(os.listdir(f'./results/{target_data}'))).zfill(3)}"
         self.debug = debug
         self.is_grid_search = is_grid_search
@@ -58,27 +56,27 @@ class GA:
         """
         return History2Vec(self.jl_main, self.thread_num).history2vec(history, interval_num)
 
-    def fitness_function(self, history_vec: list) -> float:
+    def fitness_function(self, history: list) -> float:
         """適応度計算．目的関数 * -1 を返す．
 
         Args:
-            history_vec (list): 履歴ベクトル
+            history (list): 履歴ベクトル
 
         Returns:
             float: 適応度
         """
-        return -1 * self.objective_function(history_vec)
+        return -1 * self.objective_function(history)
 
-    def objective_function(self, history_vec: list) -> float:
+    def objective_function(self, history: list) -> float:
         """目的関数．ターゲットとの差の絶対値の和を返す．
 
         Args:
-            history_vec (list): 履歴ベクトル
+            history (list): 履歴ベクトル
 
         Returns:
             float: 目的関数の値
         """
-        return np.sum(np.abs(np.array(history_vec) - np.array(self.target)))
+        return np.sum(np.abs(np.array(history) - np.array(self.target)))
 
     def selection(self, population: list, fitness: list) -> list:
         """ルーレット選択．適応度に比例した確率で個体を選択し，親個体にする．この親個体を用いて交叉を行う．
@@ -92,9 +90,9 @@ class GA:
         """
         parents1 = np.zeros((self.population_size, 4))
         parents2 = np.zeros((self.population_size, 4))
+        fitness = np.array(fitness)
+        weights = calc_weights(fitness)
         for i in range(self.population_size):
-            weights = 1 / fitness
-            weights /= np.sum(weights)
             parents1[i] = population[np.random.choice(self.population_size, p=weights)]
             parents2[i] = population[np.random.choice(self.population_size, p=weights)]
         return parents1, parents2
@@ -198,10 +196,10 @@ class GA:
                     nu=population[i][1],
                     recentness=population[i][2],
                     friendship=population[i][3],
-                    steps=100,
+                    steps=20000,
                 )
-                self.history = run_model(params)
-                fitness[i] = self.fitness_function(self.tovec(self.history, 10))
+                self.histories[i] = run_model(params)
+                fitness[i] = self.fitness_function(self.tovec(self.histories[i], 1000))
 
             # 選択
             parents1, parents2 = self.selection(population, fitness)
@@ -225,17 +223,41 @@ class GA:
 
             # 結果の表示
             if self.debug:
-                logging.info(
-                    f"Generation {generation}: Best fitness = {np.max(fitness)}, 10 metrics = {self.tovec(self.history, 10)}"
-                )
+                arg = np.argmax(fitness)
+                best_fitness = -1 * np.max(fitness)
+                best_params = population[arg]
+                metrics = self.tovec(self.histories[arg], 10)
+                message = f"Generation {generation}: Best fitness = {best_fitness}, Best params = {best_params}, 10Metrics = {metrics}"
+                logging.info(message)
 
             # 個体群の出力
             self.dump_population(population, generation, fitness)
 
         # 適応度の最小値，ターゲット，最適解，10個の指標を返す
+        arg = np.argmax(fitness)
         return (
             -1 * np.max(fitness),
             self.target,
-            population[np.argmax(fitness)],
-            self.tovec(self.history, 10),
+            population[arg],
+            self.tovec(self.histories[arg], 10),
         )
+
+
+def sigmoid(a: float, x: np.ndarray) -> np.ndarray:
+    assert a > 0
+    return 1 / (1 + np.exp(-a * x))
+
+
+def calc_weights(x: np.ndarray) -> np.ndarray:
+    """適応度から重みを計算する．
+    Args:
+        x (np.ndarray): 適応度のリスト
+
+    Returns:
+        weights (np.ndarray): 重みのリスト
+    """
+
+    x = x - np.mean(x)
+    weights = sigmoid(5, x)
+    weights /= np.sum(weights)
+    return weights

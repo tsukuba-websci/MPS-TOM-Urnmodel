@@ -43,4 +43,4 @@ class JuliaInitializer:
 
         self.jl_main = Main
 
-        self.jl_main.include("./lib/history2vec.jl")
+        self.jl_main.include("../lib/history2vec.jl")
