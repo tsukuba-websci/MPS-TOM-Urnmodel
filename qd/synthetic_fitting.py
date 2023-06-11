@@ -24,7 +24,7 @@ def run(rhos: List[int], nus: List[int]):
         standardize_model_path="./models/standardize.pkl",
     )
 
-    history2vec_results = pd.read_csv("../data/synthetic_fitting_target.csv").groupby(["rho", "nu", "s"]).mean()
+    history2vec_results = pd.read_csv("../data/synthetic_target.csv").groupby(["rho", "nu", "s"]).mean()
 
     strategies: List[Strategy] = ["SSW", "WSW"]
 
@@ -51,7 +51,7 @@ def run(rhos: List[int], nus: List[int]):
         )
 
         qds = QualityDiversitySearch(
-            task_id=f"rho{params.rho}_nu{params.nu}_s{params.s}",
+            task_id=f"synthetic/rho{params.rho}_nu{params.nu}_s{params.s}",
             target=target,
             history2bd=history2bd,
             iteration_num=100,

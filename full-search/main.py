@@ -1,6 +1,6 @@
 import os
 from multiprocessing import Pool
-from typing import Any, List, Tuple
+from typing import List
 
 from tqdm import tqdm
 
@@ -15,9 +15,9 @@ class FullSearch:
         self.rhos = rhos
         self.nus = nus
 
-    def __write_vecs(self, rho: int, nu: int, r: float, fr: float, vecs: List[History2VecResult]):
+    def __write_vecs(self, rho: int, nu: int, recentness: float, frequency: float, vecs: List[History2VecResult]):
         for vec in vecs:
-            row = ",".join(map(str, [rho, nu, r, fr] + list(vec)))
+            row = ",".join(map(str, [rho, nu, recentness, frequency] + list(vec)))
             with open(f"results/{self.outfile}.csv", "+a") as f:
                 f.write(row + "\n")
 
@@ -26,7 +26,7 @@ class FullSearch:
 
         os.makedirs("results", exist_ok=True)
         with open(f"results/{self.outfile}.csv", "w") as f:
-            f.write(",".join(["rho", "nu", "rec", "fri"] + list(History2VecResult._fields)) + "\n")
+            f.write(",".join(["rho", "nu", "recentness", "frequency"] + list(History2VecResult._fields)) + "\n")
 
         ss = [(1.0, 0.0), (0.5, 0.5)]
 
