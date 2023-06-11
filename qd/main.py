@@ -24,7 +24,7 @@ class QualityDiversitySearch:
     history2bd: History2BD
     thread_num: int = 0
     jl_main: Any
-    archive_file_path: str
+    result_dir_path: str
     archives_dir_path: str
     iteration_num: int
 
@@ -40,10 +40,8 @@ class QualityDiversitySearch:
         self.task_name = task_id
         self.iteration_num = iteration_num
 
-        result_dir = f"results/{self.task_name}"
-
-        self.archive_file_path = f"{result_dir}/archive.pkl"
-        self.archives_dir_path = f"{result_dir}/archives"
+        self.result_dir_path = f"results/{self.task_name}"
+        self.archives_dir_path = f"{self.result_dir_path}/archives"
 
         os.makedirs(self.archives_dir_path, exist_ok=True)
 
@@ -51,8 +49,8 @@ class QualityDiversitySearch:
         self.jl_main, self.thread_num = JuliaInitializer().initialize()
 
         archive: Union[CVTArchive, None] = None
-        if os.path.exists(self.archive_file_path):
-            with open(self.archive_file_path, "rb") as f:
+        if os.path.exists(f"{self.archives_dir_path}/archive.pkl"):
+            with open(f"{self.archives_dir_path}/archive.pkl", "rb") as f:
                 archive = pickle.load(f)
         else:
             archive = CVTArchive(
@@ -94,13 +92,13 @@ class QualityDiversitySearch:
             rhos: List[float] = list(map(lambda sol: sol[0].item(), sols))
             nus: List[float] = list(map(lambda sol: sol[1].item(), sols))
             recentnesses: List[float] = list(map(lambda sol: sol[2].item(), sols))
-            friendships: List[float] = list(map(lambda sol: sol[3].item(), sols))
+            frequency: List[float] = list(map(lambda sol: sol[3].item(), sols))
             steps = [20000 for _ in range(len(rhos))]
 
             objs = []
             params_list = map(
                 lambda t: Params(*t),
-                zip(rhos, nus, recentnesses, friendships, steps),
+                zip(rhos, nus, recentnesses, frequency, steps),
             )
 
             # Evaluate the models and record the objectives and measuress.
@@ -119,10 +117,22 @@ class QualityDiversitySearch:
             optimizer.tell(objs, bcs)
 
             # save latest archive
-            with open(self.archive_file_path, "wb") as file:
+            with open(f"{self.result_dir_path}/archive.pkl", "wb") as file:
                 pickle.dump(archive, file)
 
-            # T0DO: csv形式で結果を出力する
+            # save archive as csv
+            df = archive.as_pandas()
+            df.rename(
+                columns={
+                    "solution_0": "rho",
+                    "solution_1": "nu",
+                    "solution_2": "recentness",
+                    "solution_3": "frequency",
+                },
+                inplace=True,
+            )
+            df = df[["rho", "nu", "recentness", "frequency", "objective"]].sort_values(by="objective", ascending=False)
+            df.to_csv(f"{self.archives_dir_path}/{iter:0>8}.csv", index=False)
 
             if iter % 25 == 0:
                 elapsed_time = time.time() - start_time
@@ -130,6 +140,8 @@ class QualityDiversitySearch:
                 print(f"  - Archive Size: {len(archive)}")
                 assert archive.stats is not None, "archive.stats is None!"
                 print(f"  - Max Score: {archive.stats.obj_max}")
+        # save best result as csv
+        df.head(1).to_csv(f"{self.result_dir_path}/best.csv", index=False)
 
 
 if __name__ == "__main__":
