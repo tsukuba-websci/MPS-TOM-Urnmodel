@@ -21,6 +21,7 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
         help="ターゲットデータ",
     )
     parser.add_argument("-p", "--prod", action="store_true", default=False, help="本番実行用フラグ．出力先を変更する．")
+    parser.add_argument("-f", "--force", action="store_true", default=False, help="既存のファイルを上書きする．")
     args = parser.parse_args()
     return args
 
