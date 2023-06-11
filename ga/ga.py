@@ -15,7 +15,7 @@ class GA:
     def __init__(
         self,
         population_size: int,
-        rate: float,
+        mutation_rate: float,
         cross_rate: float,
         target: History2VecResult,
         target_data: str,
@@ -23,15 +23,16 @@ class GA:
         thread_num: int,
         min_val: float = -1.0,
         max_val: float = 1.0,
+        num_generations: int = 500,
         debug: bool = True,
         is_grid_search: bool = False,
     ) -> None:
         self.population_size = population_size
         self.min_val = min_val
         self.max_val = max_val
-        self.rate = rate
+        self.mutation_rate = mutation_rate
         self.cross_rate = cross_rate
-        self.num_generations = 500
+        self.num_generations = num_generations
 
         self.target = target
         self.target_data = target_data
@@ -123,7 +124,7 @@ class GA:
             children (list): 子のリスト
         """
         for i in range(self.population_size):
-            if np.random.rand() < self.rate:
+            if np.random.rand() < self.mutation_rate:
                 idx = np.random.randint(4)
                 children[i][idx] = np.random.uniform(low=self.min_val, high=self.max_val)
         return children

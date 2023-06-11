@@ -12,7 +12,7 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
         argparse.Namespace: コマンドライン引数のパース結果
     """
     parser.add_argument("population_size", type=int, help="個体数")
-    parser.add_argument("rate", type=float, help="突然変異率")
+    parser.add_argument("mutation_rate", type=float, help="突然変異率")
     parser.add_argument("cross_rate", type=float, help="交叉率")
     parser.add_argument(
         "target_data",

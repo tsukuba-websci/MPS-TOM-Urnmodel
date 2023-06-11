@@ -15,12 +15,12 @@ def main():
     parser = argparse.ArgumentParser()
     args = parse_args(parser)
 
-    population_size, rate, cross_rate = (
+    population_size, mutation_rate, cross_rate = (
         args.population_size,
-        args.rate,
+        args.mutation_rate,
         args.cross_rate,
     )
-    validate(population_size, rate, cross_rate)
+    validate(population_size, mutation_rate, cross_rate)
 
     target_data = args.target_data
 
@@ -31,9 +31,9 @@ def main():
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(message)s",
-        filename=f"log/{target_data}_rate_{rate}_population_{population_size}_cross_rate_{cross_rate}.log",
+        filename=f"log/{target_data}_mutation_rate_{mutation_rate}_population_{population_size}_cross_rate_{cross_rate}.log",
     )
-    logging.info(f"Start GA with population_size={population_size}, rate={rate}, cross_rate={cross_rate}")
+    logging.info(f"Start GA with population_size={population_size}, mutation_rate={mutation_rate}, cross_rate={cross_rate}")
 
     # read target data
     fp = f"../data/{target_data}.csv"
@@ -60,7 +60,7 @@ def main():
             target=target,
             target_data=target_data,
             population_size=population_size,
-            rate=rate,
+            mutation_rate=mutation_rate,
             cross_rate=cross_rate,
             jl_main=jl_main,
             thread_num=thread_num,
