@@ -19,7 +19,6 @@ class GA:
         cross_rate: float,
         target: History2VecResult,
         target_data: str,
-        history: list,
         jl_main: Any,
         thread_num: int,
         min_val: float = -1.0,
@@ -36,7 +35,6 @@ class GA:
 
         self.target = target
         self.target_data = target_data
-        self.history = history
         self.jl_main = jl_main
         self.thread_num = thread_num
         self.histories = [[] for _ in range(self.population_size)]
