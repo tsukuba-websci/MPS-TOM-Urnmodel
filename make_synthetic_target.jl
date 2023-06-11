@@ -31,7 +31,7 @@ end
 
 function synthetic_target()
   outdir = mkpath("data")
-  outfile = "$outdir/synthetic_fitting_target.csv"
+  outfile = "$outdir/synthetic_target.csv"
 
   open(outfile, "w") do fp
     println(fp, "rho,nu,s,gamma,no,nc,oo,oc,c,y,g,r,h")
