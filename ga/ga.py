@@ -17,12 +17,12 @@ class GA:
         cross_rate: float,
         target: History2VecResult,
         target_data: str,
+        num_generations: int,
         jl_main: Any,
         thread_num: int,
         archive_dir: str,
         min_val: float = -1.0,
         max_val: float = 1.0,
-        num_generations: int = 500,
         debug: bool = True,
         is_grid_search: bool = False,
     ) -> None:

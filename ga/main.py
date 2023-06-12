@@ -25,6 +25,7 @@ def config_logging(target_data: str, mutation_rate: float, population_size: int,
 def run(
     target: History2VecResult,
     target_data: str,
+    num_generations: int,
     population_size: int,
     mutation_rate: float,
     cross_rate: float,
@@ -54,6 +55,7 @@ def run(
     ga = GA(
         target=target,
         target_data=target_data,
+        num_generations=num_generations,
         population_size=population_size,
         mutation_rate=mutation_rate,
         cross_rate=cross_rate,
@@ -110,10 +112,13 @@ def main():
             h=row.h,
         )
         target_data = f"synthetic/rho{rho}_nu{nu}_s{s}"
+        num_generations = 100
+
     else:
         target_csv = f"../data/{target_data}.csv"
         df = cast(Dict[str, float], pd.read_csv(target_csv).iloc[0].to_dict())
         target = History2VecResult(**df)
+        num_generations = 500
 
     # setting output directory
     output_base_dir = f"./results/{target_data}"
@@ -138,6 +143,7 @@ def main():
     min_distance, _, best_individual, _ = run(
         target=target,
         target_data=target_data,
+        num_generations=num_generations,
         population_size=population_size,
         mutation_rate=mutation_rate,
         cross_rate=cross_rate,
