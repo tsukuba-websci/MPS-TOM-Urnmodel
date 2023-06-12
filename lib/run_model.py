@@ -9,7 +9,7 @@ class Params:
     rho: float
     nu: float
     recentness: float
-    friendship: float
+    frequency: float
     steps: int
 
 
@@ -24,7 +24,7 @@ def run_model(params: Params) -> List[Tuple[int, int]]:
     """
     rho = int(params.rho)
     nu = int(params.nu)
-    gene = Gene(rho, nu, params.recentness, params.friendship)
+    gene = Gene(rho, nu, params.recentness, params.frequency)
     env = Environment(gene)
     for _ in range(params.steps):
         caller = env.get_caller()
