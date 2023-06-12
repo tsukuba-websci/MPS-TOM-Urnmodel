@@ -13,15 +13,20 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
     Returns:
         argparse.Namespace: コマンドライン引数のパース結果
     """
+
     parser.add_argument("population_size", type=int, help="個体数")
     parser.add_argument("mutation_rate", type=float, help="突然変異率")
     parser.add_argument("cross_rate", type=float, help="交叉率")
     parser.add_argument(
         "target_data",
         type=str,
-        choices=["twitter", "aps", "synthetic_target"],
+        choices=["twitter", "aps", "synthetic"],
         help="ターゲットデータ",
     )
+    parser.add_argument("rho", type=int, nargs="?", default=None, help="rho")
+    parser.add_argument("nu", type=int, nargs="?", default=None, help="nu")
+    parser.add_argument("s", type=str, nargs="?", default=None, choices=["SSW", "WSW"], help="strategy")
+
     parser.add_argument("-p", "--prod", action="store_true", default=False, help="本番実行用フラグ．出力先を変更する．")
     parser.add_argument("-f", "--force", action="store_true", default=False, help="既存のファイルを上書きする．")
     args = parser.parse_args()
