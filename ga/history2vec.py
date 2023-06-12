@@ -7,7 +7,7 @@ class Params:
     rho: float
     nu: float
     recentness: float
-    friendship: float
+    frequency: float
     steps: int
 
 
