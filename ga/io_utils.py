@@ -57,8 +57,9 @@ def dump_json(result: tuple, fpath: str) -> None:
         result (tuple): GAの結果
         fpath (str): 出力先のパス
     """
+    print(result)
     res = {
-        "best_fitness": result[0],
+        "min_distance": result[0],
         "params": {
             "rho": result[2][0],
             "nu": result[2][1],

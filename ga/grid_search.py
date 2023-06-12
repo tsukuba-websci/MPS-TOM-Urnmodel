@@ -7,6 +7,7 @@ import pandas as pd
 from ga import GA
 from lib.history2vec import History2VecResult
 from lib.julia_initializer import JuliaInitializer
+from io_utils import dump_json
 
 
 def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
@@ -64,7 +65,11 @@ class GridSearch:
         for mutation_rate in mutation_rate_iter:
             for cross_rate in cross_rate_iter:
                 for population_size in population_size_iter:
-                    min_distance, _, best_individual, _ = GA(
+                    output_fp = f"{self.output_dir}/mutation_rate_{mutation_rate}_population_{population_size}_cross_rate_{cross_rate}.json"
+                    if os.path.exists(output_fp) and not self.force:
+                        print(f"{output_fp} already exists. Skip.")
+                        continue
+                    result = GA(
                         target=self.target,
                         target_data=self.target_data,
                         num_generations=num_generations,
@@ -76,8 +81,10 @@ class GridSearch:
                         archive_dir=self.output_dir,
                         is_grid_search=True,
                     ).run()
-                    print(
-                        f"mutation_rate: {mutation_rate}, cross_rate: {cross_rate}, population_size: {population_size}, min_distance: {min_distance}"
+                    # dump result
+                    dump_json(
+                        result,
+                        output_fp,
                     )
 
 
@@ -90,6 +97,7 @@ def main():
 
     # read target data
     if target_data == "synthetic":
+        # TODO: 合成データの場合もいい感じに対応する
         return
         rho = args.rho
         nu = args.nu
