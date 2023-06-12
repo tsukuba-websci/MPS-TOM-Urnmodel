@@ -225,8 +225,9 @@ class GA:
                 message = f"Generation {generation}: Best fitness = {best_fitness}, Best params = {best_params}, 10Metrics = {metrics}"
                 logging.info(message)
 
-            # 個体群の出力
-            self.dump_population(population, generation, fitness)
+            # 個体群の出力 (グリッドサーチの場合は出力しない)
+            if not self.is_grid_search:
+                self.dump_population(population, generation, fitness)
 
         # 適応度の最小値，ターゲット，最適解，10個の指標を返す
         arg = np.argmax(fitness)
