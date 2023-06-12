@@ -123,7 +123,7 @@ def main():
         target_csv = f"../data/{target_data}.csv"
         df = cast(Dict[str, float], pd.read_csv(target_csv).iloc[0].to_dict())
         target = History2VecResult(**df)
-        num_generations = 5
+        num_generations = 500
 
     # Set Up Julia
     jl_main, thread_num = JuliaInitializer().initialize()
