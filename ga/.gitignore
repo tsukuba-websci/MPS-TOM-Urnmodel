@@ -9,5 +9,5 @@ results/aps/**/*
 results/twitter/**/*
 !results/twitter/.gitkeep
 
-results/synthetic/**/*
-!results/synthetic/.gitkeep
+results/synthetic_target/**/*
+!results/synthetic_target/.gitkeep

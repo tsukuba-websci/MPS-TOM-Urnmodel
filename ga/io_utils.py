@@ -19,7 +19,7 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
     parser.add_argument(
         "target_data",
         type=str,
-        choices=["twitter", "aps", "synthetic_fitting_target"],
+        choices=["twitter", "aps", "synthetic_target"],
         help="ターゲットデータ",
     )
     parser.add_argument("-p", "--prod", action="store_true", default=False, help="本番実行用フラグ．出力先を変更する．")

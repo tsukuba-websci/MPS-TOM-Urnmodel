@@ -51,18 +51,46 @@ def run(
     for row in reader:
         if len(row) < 10:
             raise ValueError("Invalid target data.")
-        target = History2VecResult(
-            gamma=float(row[0]),
-            c=float(row[1]),
-            oc=float(row[2]),
-            oo=float(row[3]),
-            nc=float(row[4]),
-            no=float(row[5]),
-            y=float(row[6]),
-            r=float(row[7]),
-            h=float(row[8]),
-            g=float(row[9]),
-        )
+        if target_data == "synthetic_target":
+            rho, nu, s = float(row[0]), float(row[1]), row[2]
+            if s == "SSW":
+                recentness, frequency = 0.0, 1.0
+            elif s == "WSW":
+                recentness, frequency = 0.5, 0.5
+            else:
+                raise ValueError("Invalid Strategy.")
+            # FIXME: 合成データだけ，カラムの順番が異なる...
+            target = History2VecResult(
+                gamma=float(row[3]),
+                no=float(row[4]),
+                nc=float(row[5]),
+                oo=float(row[6]),
+                oc=float(row[7]),
+                c=float(row[8]),
+                y=float(row[9]),
+                g=float(row[10]),
+                r=float(row[11]),
+                h=float(row[12]),
+            )
+            logging.info(
+                f"Target Data: Synthetic Target, rho={rho}, nu={nu}, recentness={recentness}, frequency={frequency}"
+            )
+            logging.info(f"Target Metrics: {target}")
+        else:
+            target = History2VecResult(
+                gamma=float(row[0]),
+                c=float(row[1]),
+                oc=float(row[2]),
+                oo=float(row[3]),
+                nc=float(row[4]),
+                no=float(row[5]),
+                y=float(row[6]),
+                r=float(row[7]),
+                h=float(row[8]),
+                g=float(row[9]),
+            )
+            logging.info(f"Target Data: {target_data}")
+            logging.info(f"Target Metrics: {target}")
 
         ga = GA(
             target=target,
@@ -76,6 +104,7 @@ def run(
         )
 
         min_fitness, target_vec, params, ten_metrics = ga.run()
+        logging.info(f"min_fitness={min_fitness}, target_vec={target_vec}, params={params}, ten_metrics={ten_metrics}")
         result.append((min_fitness, target_vec, params, ten_metrics))
 
     # sort by fitness
