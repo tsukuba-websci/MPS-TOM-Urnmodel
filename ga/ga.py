@@ -1,8 +1,10 @@
 import csv
 import logging
+from multiprocessing import Pool
 from typing import Any, List, Tuple
 
 import numpy as np
+from tqdm import tqdm
 
 from lib.history2vec import History2Vec, History2VecResult
 from lib.run_model import Params, run_model
@@ -42,18 +44,6 @@ class GA:
         self.archives_dir = archive_dir
         self.debug = debug
         self.is_grid_search = is_grid_search
-
-    def tovec(self, history: List[Tuple[int, int]], interval_num: int) -> History2VecResult:
-        """相互やり取りの履歴を10個の指標に変換する．
-
-        Args:
-            history (List[Tuple[int, int]]): 相互作用履歴
-            interval_num (int): 区間数
-
-        Returns:
-            History2VecResult: 履歴ベクトル
-        """
-        return History2Vec(self.jl_main, self.thread_num).history2vec(history, interval_num)
 
     def fitness_function(self, history: list) -> float:
         """適応度計算．目的関数 * -1 を返す．
@@ -182,20 +172,29 @@ class GA:
         """
         population = self.run_init()
         # 世代ごとに進化
-        for generation in range(1, self.num_generations + 1):
+        for generation in tqdm(range(self.num_generations)):
             fitness = np.zeros(self.population_size)
 
-            # やり取りを行う履歴を生成し，適応度計算を行う
+            # やり取りを行う履歴を生成する
+            rhos: List[float] = [population[i][0] for i in range(self.population_size)]
+            nus: List[float] = [population[i][1] for i in range(self.population_size)]
+            recentnesses: List[float] = [population[i][2] for i in range(self.population_size)]
+            frequency: List[float] = [population[i][3] for i in range(self.population_size)]
+            steps = [20000 for _ in range(len(rhos))]
+
+            params_list = map(
+                lambda t: Params(*t),
+                zip(rhos, nus, recentnesses, frequency, steps),
+            )
+
+            with Pool(self.thread_num) as pool:
+                self.histories = pool.map(run_model, params_list)
+
+            history_vecs = History2Vec(self.jl_main, self.thread_num).history2vec_parallel(self.histories, 1000)
+
+            # 適応度計算
             for i in range(self.population_size):
-                params = Params(
-                    rho=population[i][0],
-                    nu=population[i][1],
-                    recentness=population[i][2],
-                    frequency=population[i][3],
-                    steps=20000,
-                )
-                self.histories[i] = run_model(params)
-                fitness[i] = self.fitness_function(self.tovec(self.histories[i], 1000))
+                fitness[i] = self.fitness_function(history_vecs[i])
 
             # 選択
             parents1, parents2 = self.selection(population, fitness)
@@ -222,7 +221,7 @@ class GA:
                 arg = np.argmax(fitness)
                 best_fitness = -1 * np.max(fitness)
                 best_params = population[arg]
-                metrics = self.tovec(self.histories[arg], 10)
+                metrics = History2Vec(self.histories[arg], 10)
                 message = f"Generation {generation}: Best fitness = {best_fitness}, Best params = {best_params}, 10Metrics = {metrics}"
                 logging.info(message)
 
@@ -235,7 +234,7 @@ class GA:
             -1 * np.max(fitness),
             self.target,
             population[arg],
-            self.tovec(self.histories[arg], 10),
+            History2Vec(self.histories[arg], 10),
         )
 
 
