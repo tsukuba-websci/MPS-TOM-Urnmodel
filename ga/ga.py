@@ -45,18 +45,6 @@ class GA:
         self.debug = debug
         self.is_grid_search = is_grid_search
 
-    def tovec(self, history: List[Tuple[int, int]], interval_num: int) -> History2VecResult:
-        """相互やり取りの履歴を10個の指標に変換する．
-
-        Args:
-            history (List[Tuple[int, int]]): 相互作用履歴
-            interval_num (int): 区間数
-
-        Returns:
-            History2VecResult: 履歴ベクトル
-        """
-        return History2Vec(self.jl_main, self.thread_num).history2vec(history, interval_num)
-
     def fitness_function(self, history: list) -> float:
         """適応度計算．目的関数 * -1 を返す．
 
@@ -233,7 +221,7 @@ class GA:
                 arg = np.argmax(fitness)
                 best_fitness = -1 * np.max(fitness)
                 best_params = population[arg]
-                metrics = self.tovec(self.histories[arg], 10)
+                metrics = History2Vec(self.histories[arg], 10)
                 message = f"Generation {generation}: Best fitness = {best_fitness}, Best params = {best_params}, 10Metrics = {metrics}"
                 logging.info(message)
 
@@ -246,7 +234,7 @@ class GA:
             -1 * np.max(fitness),
             self.target,
             population[arg],
-            self.tovec(self.histories[arg], 10),
+            History2Vec(self.histories[arg], 10),
         )
 
 
