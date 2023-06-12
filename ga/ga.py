@@ -182,7 +182,7 @@ class GA:
         """
         population = self.run_init()
         # 世代ごとに進化
-        for generation in range(1, self.num_generations + 1):
+        for generation in range(self.num_generations):
             fitness = np.zeros(self.population_size)
 
             # やり取りを行う履歴を生成し，適応度計算を行う
