@@ -4,11 +4,11 @@ import os
 from typing import Any, Dict, cast
 
 import pandas as pd
-from history2vec import History2VecResult
 from io_utils import export_individual, parse_args, pass_run, validate
-from julia_initializer import JuliaInitializer
 
 from ga import GA
+from lib.history2vec import History2VecResult
+from lib.julia_initializer import JuliaInitializer
 
 
 def config_logging(target_data: str, mutation_rate: float, population_size: int, cross_rate: float):
