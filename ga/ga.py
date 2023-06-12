@@ -3,8 +3,9 @@ import logging
 from typing import Any, List, Tuple
 
 import numpy as np
-from history2vec import History2Vec, History2VecResult, Params
-from run_model import run_model
+
+from lib.history2vec import History2Vec, History2VecResult
+from lib.run_model import Params, run_model
 
 
 class GA:
