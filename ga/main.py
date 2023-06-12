@@ -38,6 +38,7 @@ def run(
     Args:
         target (History2VecResult): ターゲットの10個の指標
         target_data (str): ターゲットデータ
+        num_generations (int): 世代数
         population_size (int): 個体数
         mutation_rate (float): 突然変異率
         cross_rate (float): 交叉率
@@ -113,7 +114,6 @@ def main():
         )
         target_data = f"synthetic/rho{rho}_nu{nu}_s{s}"
         num_generations = 100
-
     else:
         target_csv = f"../data/{target_data}.csv"
         df = cast(Dict[str, float], pd.read_csv(target_csv).iloc[0].to_dict())
