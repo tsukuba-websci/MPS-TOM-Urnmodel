@@ -27,7 +27,7 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
     parser.add_argument("nu", type=int, nargs="?", default=None, help="nu")
     parser.add_argument("s", type=str, nargs="?", default=None, choices=["SSW", "WSW"], help="strategy")
 
-    parser.add_argument("-p", "--prod", action="store_true", default=False, help="本番実行用フラグ．出力先を変更する．")
+    # parser.add_argument("-p", "--prod", action="store_true", default=False, help="本番実行用フラグ．出力先を変更する．")
     parser.add_argument("-f", "--force", action="store_true", default=False, help="既存のファイルを上書きする．")
     args = parser.parse_args()
     return args
@@ -58,7 +58,7 @@ def dump_json(result: tuple, fpath: str) -> None:
         fpath (str): 出力先のパス
     """
     res = {
-        "best_fitness": result[0],
+        "min_distance": result[0],
         "params": {
             "rho": result[2][0],
             "nu": result[2][1],
