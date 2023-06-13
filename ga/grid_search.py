@@ -119,13 +119,11 @@ def main():
             h=row.h,
         )
         target_data = f"synthetic/rho{rho}_nu{nu}_s{s}"
-        num_generations = 100
 
     else:
         target_csv = f"../data/{target_data}.csv"
         df = cast(Dict[str, float], pd.read_csv(target_csv).iloc[0].to_dict())
         target = History2VecResult(**df)
-        num_generations = 500
 
     # Set Up Julia
     jl_main, thread_num = JuliaInitializer().initialize()
@@ -134,6 +132,7 @@ def main():
     mutation_rate_iter = [0.01, 0.02, 0.03, 0.04, 0.05]
     cross_rate_iter = [0.5, 0.6, 0.7, 0.8, 0.9]
     population_size_iter = [10, 20, 30, 40, 50]
+    num_generations = 100
     output_dir = f"./results/grid_search/{target_data}"
     os.makedirs(output_dir, exist_ok=True)
     gs = GridSearch(target, target_data, output_dir, jl_main, thread_num, force)
