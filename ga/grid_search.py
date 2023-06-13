@@ -3,11 +3,11 @@ import os
 from typing import Any, Dict, cast
 
 import pandas as pd
+from io_utils import dump_json
 
 from ga import GA
 from lib.history2vec import History2VecResult
 from lib.julia_initializer import JuliaInitializer
-from io_utils import dump_json
 
 
 def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
@@ -23,6 +23,9 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
     """
     parser.add_argument("target_data", type=str, choices=["twitter", "aps", "synthetic"], help="ターゲットデータ")
     parser.add_argument("-f", "--force", action="store_true", default=False, help="既存のファイルを上書きする．")
+    parser.add_argument("rho", type=int, nargs="?", default=None, help="rho")
+    parser.add_argument("nu", type=int, nargs="?", default=None, help="nu")
+    parser.add_argument("s", type=str, nargs="?", default=None, choices=["SSW", "WSW"], help="strategy")
     args = parser.parse_args()
     return args
 
@@ -97,8 +100,6 @@ def main():
 
     # read target data
     if target_data == "synthetic":
-        # TODO: 合成データの場合もいい感じに対応する
-        return
         rho = args.rho
         nu = args.nu
         s = args.s
@@ -119,6 +120,7 @@ def main():
         )
         target_data = f"synthetic/rho{rho}_nu{nu}_s{s}"
         num_generations = 100
+
     else:
         target_csv = f"../data/{target_data}.csv"
         df = cast(Dict[str, float], pd.read_csv(target_csv).iloc[0].to_dict())
