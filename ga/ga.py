@@ -171,6 +171,8 @@ class GA:
         8. 結果の表示
         """
         population = self.run_init()
+        history2vec_ = History2Vec(self.jl_main, self.thread_num)
+
         # 世代ごとに進化
         for generation in tqdm(range(self.num_generations)):
             fitness = np.zeros(self.population_size)
@@ -190,7 +192,7 @@ class GA:
             with Pool(self.thread_num) as pool:
                 self.histories = pool.map(run_model, params_list)
 
-            history_vecs = History2Vec(self.jl_main, self.thread_num).history2vec_parallel(self.histories, 1000)
+            history_vecs = history2vec_.history2vec_parallel(self.histories, 1000)
 
             # 適応度計算
             for i in range(self.population_size):
@@ -221,7 +223,7 @@ class GA:
                 arg = np.argmax(fitness)
                 best_fitness = -1 * np.max(fitness)
                 best_params = population[arg]
-                metrics = History2Vec(self.histories[arg], 10)
+                metrics = history2vec_.history2vec(self.histories[arg], 10)
                 message = f"Generation {generation}: Best fitness = {best_fitness}, Best params = {best_params}, 10Metrics = {metrics}"
                 logging.info(message)
 
@@ -235,7 +237,7 @@ class GA:
             -1 * np.max(fitness),
             self.target,
             population[arg],
-            History2Vec(self.histories[arg], 10),
+            history2vec_.history2vec(self.histories[arg], 10),
         )
 
 
