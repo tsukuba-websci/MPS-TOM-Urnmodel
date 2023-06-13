@@ -1,9 +1,13 @@
+import csv
 import logging
+from multiprocessing import Pool
 from typing import Any, List, Tuple
 
 import numpy as np
-from history2vec import History2Vec, History2VecResult, Params
-from run_model import run_model
+from tqdm import tqdm
+
+from lib.history2vec import History2Vec, History2VecResult
+from lib.run_model import Params, run_model
 
 
 class GA:
@@ -12,39 +16,34 @@ class GA:
     def __init__(
         self,
         population_size: int,
-        rate: float,
+        mutation_rate: float,
         cross_rate: float,
         target: History2VecResult,
+        target_data: str,
+        num_generations: int,
         jl_main: Any,
         thread_num: int,
+        archive_dir: str,
         min_val: float = -1.0,
         max_val: float = 1.0,
         debug: bool = True,
+        is_grid_search: bool = False,
     ) -> None:
         self.population_size = population_size
         self.min_val = min_val
         self.max_val = max_val
-        self.rate = rate
+        self.mutation_rate = mutation_rate
         self.cross_rate = cross_rate
-        self.num_generations = 500
+        self.num_generations = num_generations
 
         self.target = target
+        self.target_data = target_data
         self.jl_main = jl_main
         self.thread_num = thread_num
         self.histories = [[] for _ in range(self.population_size)]
+        self.archives_dir = archive_dir
         self.debug = debug
-
-    def tovec(self, history: List[Tuple[int, int]], interval_num: int) -> History2VecResult:
-        """相互やり取りの履歴を10個の指標に変換する．
-
-        Args:
-            history (List[Tuple[int, int]]): 相互作用履歴
-            interval_num (int): 区間数
-
-        Returns:
-            History2VecResult: 履歴ベクトル
-        """
-        return History2Vec(self.jl_main, self.thread_num).history2vec(history, interval_num)
+        self.is_grid_search = is_grid_search
 
     def fitness_function(self, history: list) -> float:
         """適応度計算．目的関数 * -1 を返す．
@@ -72,7 +71,7 @@ class GA:
         """ルーレット選択．適応度に比例した確率で個体を選択し，親個体にする．この親個体を用いて交叉を行う．
 
         Args:
-            population (list): 各個体のパラメータ (rho, nu, recentness, friendship) のリスト
+            population (list): 各個体のパラメータ (rho, nu, recentness, frequency) のリスト
             fitness (list): 各個体の適応度
 
         Returns:
@@ -91,8 +90,8 @@ class GA:
         """交叉．親のうちランダムに選んだものを交叉させる．
 
         Args:
-            parents1 (list): 親1 (rho, nu, recentness, friendship) のリスト
-            parents2 (list): 親2 (rho, nu, recentness, friendship) のリスト
+            parents1 (list): 親1 (rho, nu, recentness, frequency) のリスト
+            parents2 (list): 親2 (rho, nu, recentness, frequency) のリスト
             children (list): 子のリスト
 
         Returns:
@@ -115,10 +114,25 @@ class GA:
             children (list): 子のリスト
         """
         for i in range(self.population_size):
-            if np.random.rand() < self.rate:
+            if np.random.rand() < self.mutation_rate:
                 idx = np.random.randint(4)
                 children[i][idx] = np.random.uniform(low=self.min_val, high=self.max_val)
         return children
+
+    def dump_population(self, population: list, generation: int, fitness: list) -> None:
+        """個体群をファイルに出力する．
+
+        Args:
+            population (list): 個体群
+            generation (int): 世代数
+            fitness (list): 適応度
+        """
+        fp = f"{self.archives_dir}/{str(generation).zfill(8)}.csv"
+        with open(fp, "w") as f:
+            writer = csv.writer(f)
+            writer.writerow(["rho", "nu", "recentness", "frequency", "objective"])
+            for individual, fit in zip(population, fitness):
+                writer.writerow([individual[0], individual[1], individual[2], individual[3], -1 * fit])
 
     def plot():
         return
@@ -127,13 +141,13 @@ class GA:
         """GAの初期個体群を生成する．
 
         Returns:
-            population (list): 初期個体群 (rho, nu, recentness, friendship) のリスト
+            population (list): 初期個体群 (rho, nu, recentness, frequency) のリスト
         """
         rho = np.random.uniform(low=0, high=30, size=self.population_size)
         nu = np.random.uniform(low=0, high=30, size=self.population_size)
         recentness = np.random.uniform(low=self.min_val, high=self.max_val, size=self.population_size)
-        friendship = np.random.uniform(low=self.min_val, high=self.max_val, size=self.population_size)
-        population = np.array([rho, nu, recentness, friendship]).T
+        frequency = np.random.uniform(low=self.min_val, high=self.max_val, size=self.population_size)
+        population = np.array([rho, nu, recentness, frequency]).T
         return population
 
     def run(self) -> Tuple[float, History2VecResult, list]:
@@ -157,21 +171,32 @@ class GA:
         8. 結果の表示
         """
         population = self.run_init()
+        history2vec_ = History2Vec(self.jl_main, self.thread_num)
+
         # 世代ごとに進化
-        for generation in range(1, self.num_generations + 1):
+        for generation in tqdm(range(self.num_generations)):
             fitness = np.zeros(self.population_size)
 
-            # やり取りを行う履歴を生成し，適応度計算を行う
+            # やり取りを行う履歴を生成する
+            rhos: List[float] = [population[i][0] for i in range(self.population_size)]
+            nus: List[float] = [population[i][1] for i in range(self.population_size)]
+            recentnesses: List[float] = [population[i][2] for i in range(self.population_size)]
+            frequency: List[float] = [population[i][3] for i in range(self.population_size)]
+            steps = [20000 for _ in range(len(rhos))]
+
+            params_list = map(
+                lambda t: Params(*t),
+                zip(rhos, nus, recentnesses, frequency, steps),
+            )
+
+            with Pool(self.thread_num) as pool:
+                self.histories = pool.map(run_model, params_list)
+
+            history_vecs = history2vec_.history2vec_parallel(self.histories, 1000)
+
+            # 適応度計算
             for i in range(self.population_size):
-                params = Params(
-                    rho=population[i][0],
-                    nu=population[i][1],
-                    recentness=population[i][2],
-                    friendship=population[i][3],
-                    steps=20000,
-                )
-                self.histories[i] = run_model(params)
-                fitness[i] = self.fitness_function(self.tovec(self.histories[i], 1000))
+                fitness[i] = self.fitness_function(history_vecs[i])
 
             # 選択
             parents1, parents2 = self.selection(population, fitness)
@@ -198,9 +223,13 @@ class GA:
                 arg = np.argmax(fitness)
                 best_fitness = -1 * np.max(fitness)
                 best_params = population[arg]
-                metrics = self.tovec(self.histories[arg], 10)
+                metrics = history2vec_.history2vec(self.histories[arg], 10)
                 message = f"Generation {generation}: Best fitness = {best_fitness}, Best params = {best_params}, 10Metrics = {metrics}"
                 logging.info(message)
+
+            # 個体群の出力 (グリッドサーチの場合は出力しない)
+            if not self.is_grid_search:
+                self.dump_population(population, generation, fitness)
 
         # 適応度の最小値，ターゲット，最適解，10個の指標を返す
         arg = np.argmax(fitness)
@@ -208,7 +237,7 @@ class GA:
             -1 * np.max(fitness),
             self.target,
             population[arg],
-            self.tovec(self.histories[arg], 10),
+            history2vec_.history2vec(self.histories[arg], 10),
         )
 
 
