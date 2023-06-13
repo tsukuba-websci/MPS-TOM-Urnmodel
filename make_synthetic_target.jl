@@ -38,24 +38,27 @@ function synthetic_target()
   end
 
   N = 1:10
-  rhos = [1, 10, 20]
-  nus = [1, 10, 20]
+  parameter_sets = [
+    Dict("rho" => 5, "nu" => 15),
+    Dict("rho" => 21, "nu" => 7),
+    Dict("rho" => 5, "nu" => 5)
+  ]
   ss = ["SSW", "WSW"]
 
-  p = Progress(length(N) * length(rhos) * length(nus) * length(ss))
+  p = Progress(length(N) * length(parameter_sets) * length(ss))
   lk = ReentrantLock()
   Threads.@threads for _ in N
-    Threads.@threads for rho in rhos
-      Threads.@threads for nu in nus
-        Threads.@threads for s in ss
-          res = run_existing_model(rho, nu, s)
-          lock(lk) do
-            open(outfile, "a") do fp
-              println(fp, join(string.(values((; rho, nu, s, res...))), ","))
-            end
+    Threads.@threads for parameter_set in parameter_sets
+      Threads.@threads for s in ss
+        rho = parameter_set["rho"]
+        nu = parameter_set["nu"]
+        res = run_existing_model(rho, nu, s)
+        lock(lk) do
+          open(outfile, "a") do fp
+            println(fp, join(string.(values((; rho, nu, s, res...))), ","))
           end
-          next!(p)
         end
+        next!(p)
       end
     end
   end
