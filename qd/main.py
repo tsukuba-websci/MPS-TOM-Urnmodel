@@ -47,6 +47,7 @@ class QualityDiversitySearch:
 
     def run(self):
         self.jl_main, self.thread_num = JuliaInitializer().initialize()
+        history2vec_ = History2Vec(self.jl_main, self.thread_num)
 
         archive: Union[CVTArchive, None] = None
         if os.path.exists(f"{self.archives_dir_path}/archive.pkl"):
@@ -105,7 +106,7 @@ class QualityDiversitySearch:
             with Pool(self.thread_num) as pool:
                 histories = pool.map(run_model, params_list)
 
-            history_vecs = History2Vec(self.jl_main, self.thread_num).history2vec_parallel(histories, 1000)
+            history_vecs = history2vec_.history2vec_parallel(histories, 1000)
 
             bcs = self.history2bd.run(histories)
 
