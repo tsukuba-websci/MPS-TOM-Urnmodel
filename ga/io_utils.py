@@ -33,7 +33,9 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
     return args
 
 
-def export_individual(distance: float, individual: list, fpath: str) -> None:
+def export_individual(
+    distance: float, individual: list, population_size: int, mutation_rate: float, cross_rate: float, fpath: str
+) -> None:
     """個体をCSVファイルに出力する．
 
     Args:
@@ -41,9 +43,9 @@ def export_individual(distance: float, individual: list, fpath: str) -> None:
         individual (list): 個体を表すタプル．(rho, nu, recentness, frequency)の順
         fpath (str): 出力先のパス
     """
-    header = ["rho", "nu", "recentness", "frequency", "objective"]
+    header = ["rho", "nu", "recentness", "frequency", "objective", "populasion_size", "mutation_rate", "cross_rate"]
     objective = distance
-    row = [*individual, objective]
+    row = [*individual, objective, population_size, mutation_rate, cross_rate]
     with open(fpath, "w") as f:
         writer = csv.writer(f)
         writer.writerow(header)
