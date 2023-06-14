@@ -131,7 +131,7 @@ def main():
     # Set Up GridSearch
     mutation_rate_iter = [0.01, 0.02, 0.03, 0.04, 0.05]
     cross_rate_iter = [0.8, 0.85, 0.9, 0.95]
-    population_size_iter = [20, 40, 60, 80, 100]
+    population_size_iter = [10, 20, 30, 40, 50]
     num_generations = 100
     output_dir = f"./results/grid_search/{target_data}"
     os.makedirs(output_dir, exist_ok=True)
