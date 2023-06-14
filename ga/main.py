@@ -152,7 +152,7 @@ def main():
         archive_dir=os.path.join(output_base_dir, "archives"),
     )
 
-    export_individual(min_distance, best_individual, output_fp)
+    export_individual(min_distance, best_individual, population_size, mutation_rate, cross_rate, output_fp)
 
     logging.info(f"Finihsed GA. Result is dumped to {target_data}")
 

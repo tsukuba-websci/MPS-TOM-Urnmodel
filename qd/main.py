@@ -47,6 +47,7 @@ class QualityDiversitySearch:
 
     def run(self):
         self.jl_main, self.thread_num = JuliaInitializer().initialize()
+        history2vec_ = History2Vec(self.jl_main, self.thread_num)
 
         archive: Union[CVTArchive, None] = None
         if os.path.exists(f"{self.archives_dir_path}/archive.pkl"):
@@ -105,7 +106,7 @@ class QualityDiversitySearch:
             with Pool(self.thread_num) as pool:
                 histories = pool.map(run_model, params_list)
 
-            history_vecs = History2Vec(self.jl_main, self.thread_num).history2vec_parallel(histories, 1000)
+            history_vecs = history2vec_.history2vec_parallel(histories, 1000)
 
             bcs = self.history2bd.run(histories)
 
@@ -131,7 +132,9 @@ class QualityDiversitySearch:
                 },
                 inplace=True,
             )
-            df = df[["rho", "nu", "recentness", "frequency", "objective"]].sort_values(by="objective", ascending=False)
+            df["objective"] = -df["objective"]
+            df.rename(columns={"objective": "distance"}, inplace=True)
+            df = df[["rho", "nu", "recentness", "frequency", "distance"]].sort_values(by="distance", ascending=True)
             df.to_csv(f"{self.archives_dir_path}/{iter:0>8}.csv", index=False)
 
             if iter % 25 == 0:
@@ -141,7 +144,8 @@ class QualityDiversitySearch:
                 assert archive.stats is not None, "archive.stats is None!"
                 print(f"  - Max Score: {archive.stats.obj_max}")
         # save best result as csv
-        df.head(1).to_csv(f"{self.result_dir_path}/best.csv", index=False)
+        if not os.path.exists(f"{self.result_dir_path}/best.csv"):
+            df.head(1).to_csv(f"{self.result_dir_path}/best.csv", index=False)
 
 
 if __name__ == "__main__":

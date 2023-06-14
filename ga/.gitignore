@@ -11,3 +11,5 @@ results/twitter/**/*
 
 results/synthetic/**/*
 !results/synthetic/.gitkeep
+
+results/grid_search/**/*
