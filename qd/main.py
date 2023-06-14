@@ -143,7 +143,8 @@ class QualityDiversitySearch:
                 assert archive.stats is not None, "archive.stats is None!"
                 print(f"  - Max Score: {archive.stats.obj_max}")
         # save best result as csv
-        df.head(1).to_csv(f"{self.result_dir_path}/best.csv", index=False)
+        if not os.path.exists(f"{self.result_dir_path}/best.csv"):
+            df.head(1).to_csv(f"{self.result_dir_path}/best.csv", index=False)
 
 
 if __name__ == "__main__":
