@@ -130,7 +130,7 @@ class GA:
         fp = f"{self.archives_dir}/{str(generation).zfill(8)}.csv"
         with open(fp, "w") as f:
             writer = csv.writer(f)
-            writer.writerow(["rho", "nu", "recentness", "frequency", "objective"])
+            writer.writerow(["rho", "nu", "recentness", "frequency", "distance"])
             for individual, fit in zip(population, fitness):
                 writer.writerow([individual[0], individual[1], individual[2], individual[3], -1 * fit])
 

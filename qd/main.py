@@ -131,7 +131,9 @@ class QualityDiversitySearch:
                 },
                 inplace=True,
             )
-            df = df[["rho", "nu", "recentness", "frequency", "objective"]].sort_values(by="objective", ascending=False)
+            df["objective"] = -df["objective"]
+            df.rename(columns={"objective": "distance"}, inplace=True)
+            df = df[["rho", "nu", "recentness", "frequency", "distance"]].sort_values(by="distance", ascending=True)
             df.to_csv(f"{self.archives_dir_path}/{iter:0>8}.csv", index=False)
 
             if iter % 25 == 0:
