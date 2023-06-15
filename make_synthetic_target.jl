@@ -40,7 +40,7 @@ function synthetic_target()
   N = 1:10
   parameter_sets = [
     Dict("rho" => 5, "nu" => 15),
-    Dict("rho" => 21, "nu" => 7),
+    Dict("rho" => 20, "nu" => 7),
     Dict("rho" => 5, "nu" => 5)
   ]
   ss = ["SSW", "WSW"]
