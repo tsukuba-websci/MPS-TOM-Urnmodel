@@ -2,6 +2,7 @@ import os
 import sys
 from typing import List, cast
 
+import matplotlib
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -10,15 +11,15 @@ if __name__ == "__main__":
     data = sys.argv[1]
     if data == "empirical":
         targets = ["aps", "twitter"]
-    elif data == "synthetic":
-        targets = [
-            f"{data}/rho5_nu5_sSSW",
-            f"{data}/rho5_nu5_sWSW",
-            f"{data}/rho5_nu15_sSSW",
-            f"{data}/rho5_nu15_sWSW",
-            f"{data}/rho20_nu7_sSSW",
-            f"{data}/rho20_nu7_sWSW",
-        ]
+    # elif data == "synthetic":
+    #     targets = [
+    #         f"{data}/rho5_nu5_sSSW",
+    #         f"{data}/rho5_nu5_sWSW",
+    #         f"{data}/rho5_nu15_sSSW",
+    #         f"{data}/rho5_nu15_sWSW",
+    #         f"{data}/rho20_nu7_sSSW",
+    #         f"{data}/rho20_nu7_sWSW",
+    #     ]
     else:
         raise ValueError("must be 'synthetic' or 'empirical'")
 
@@ -34,6 +35,11 @@ if __name__ == "__main__":
         "r": "R",
         "h": "<h>",
     }
+
+    fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
+    fm.addfont("./STIXTwoText.ttf")
+    plt.rcParams["font.family"] = "STIX Two Text"
+    plt.rcParams["font.size"] = 16
 
     os.makedirs("results/radar_chart", exist_ok=True)
 
@@ -55,15 +61,15 @@ if __name__ == "__main__":
         emp_values = list(emp.values) + [emp.values[0]]
         fs_values = list(fs_best_vec.values) + [fs_best_vec.values[0]]
         qd_values = list(qd_best_vec.values) + [qd_best_vec.values[0]]
+        ga_values = list(ga_best_vec.values) + [ga_best_vec.values[0]]
 
         theta = np.linspace(0, np.pi * 2, len(labels))
 
-        os.makedirs(f"results/radar_chart/{target}", exist_ok=True)
-
         fig, ax = plt.subplots(subplot_kw={"projection": "polar"})
-        ax.plot(theta, fs_values, label="existing")
-        ax.plot(theta, qd_values, label="proposed")
-        ax.plot(theta, emp_values, label="target")
+        ax.plot(theta, fs_values, label="existing", color="#FC8484")
+        ax.plot(theta, ga_values, label="Genetic Algorithm", color="#76ABCB")
+        ax.plot(theta, qd_values, label="proposed", color="#51BD56")
+        ax.plot(theta, emp_values, label="target", color="#505050", linestyle="dashed")
         ax.set_xticks(theta)
         ax.set_xticklabels(labels, fontsize=20)
         ax.set_ylim(0, 1)
