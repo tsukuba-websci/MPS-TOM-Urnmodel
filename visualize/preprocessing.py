@@ -23,7 +23,7 @@ if __name__ == "__main__":
             f"{data}/rho20_nu7_sWSW",
         ]
     else:
-        raise ValueError(f"must be 'synthetic' or 'empirical'")
+        raise ValueError("must be 'synthetic' or 'empirical'")
 
     algorithms = ["ga", "qd"]
     jl_main, thread_num = JuliaInitializer().initialize()
