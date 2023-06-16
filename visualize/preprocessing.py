@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 from typing import Dict, cast
 
 import pandas as pd
@@ -8,11 +9,23 @@ from lib.history2vec import History2Vec
 from lib.julia_initializer import JuliaInitializer
 from lib.run_model import Params, run_model
 
-targets = ["aps", "twitter"]
-algorithms = ["ga", "qd"]
-
-
 if __name__ == "__main__":
+    data = sys.argv[1]
+    if data == "empirical":
+        targets = ["aps", "twitter"]
+    elif data == "synthetic":
+        targets = [
+            f"{data}/rho5_nu5_sSSW",
+            f"{data}/rho5_nu5_sWSW",
+            f"{data}/rho5_nu15_sSSW",
+            f"{data}/rho5_nu15_sWSW",
+            f"{data}/rho20_nu7_sSSW",
+            f"{data}/rho20_nu7_sWSW",
+        ]
+    else:
+        raise ValueError(f"must be 'synthetic' or 'empirical'")
+
+    algorithms = ["ga", "qd"]
     jl_main, thread_num = JuliaInitializer().initialize()
     history2vec_ = History2Vec(jl_main, thread_num)
     for target in targets:
