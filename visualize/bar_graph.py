@@ -1,9 +1,5 @@
-import os
 import sys
-from typing import List, cast
 
-import matplotlib
-import numpy as np
 import pandas as pd
 import seaborn as sns
 from cycler import cycler
