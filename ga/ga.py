@@ -24,8 +24,8 @@ class GA:
         jl_main: Any,
         thread_num: int,
         archive_dir: str,
-        range_rho: List[float] = [0.0, 30.0],
-        range_recentness: List[float] = [-1.0, 1.0],
+        boundary_rho: List[float] = [0.0, 30.0],
+        boundary_recentness: List[float] = [-1.0, 1.0],
         debug: bool = True,
         is_grid_search: bool = False,
     ) -> None:
@@ -33,8 +33,8 @@ class GA:
         self.mutation_rate = mutation_rate
         self.cross_rate = cross_rate
         self.num_generations = num_generations
-        self.range_rho = range_rho
-        self.range_recentness = range_recentness
+        self.boundary_rho = boundary_rho
+        self.boundary_recentness = boundary_recentness
         self.target = target
         self.target_data = target_data
         self.jl_main = jl_main
@@ -114,11 +114,13 @@ class GA:
         """
         for i in range(self.population_size):
             if np.random.rand() < self.mutation_rate:
-                idx = np.random.randint(4)
-                if idx < 2:
-                    children[i][idx] = np.random.uniform(low=self.range_rho[0], high=self.range_rho[1])
+                j = np.random.randint(4)
+                if j < 2:
+                    children[i][j] = np.random.uniform(low=self.boundary_rho[0], high=self.boundary_rho[1])
                 else:
-                    children[i][idx] = np.random.uniform(low=self.range_recentness[0], high=self.range_recentness[1])
+                    children[i][j] = np.random.uniform(
+                        low=self.boundary_recentness[0], high=self.boundary_recentness[1]
+                    )
         return children
 
     def dump_population(self, population: list, generation: int, fitness: list) -> None:
@@ -147,13 +149,13 @@ class GA:
         Returns:
             population (list): 初期個体群 (rho, nu, recentness, frequency) のリスト
         """
-        rho = np.random.uniform(low=self.range_rho[0], high=self.range_rho[1], size=self.population_size)
-        nu = np.random.uniform(low=self.range_rho[0], high=self.range_rho[1], size=self.population_size)
+        rho = np.random.uniform(low=self.boundary_rho[0], high=self.boundary_rho[1], size=self.population_size)
+        nu = np.random.uniform(low=self.boundary_rho[0], high=self.boundary_rho[1], size=self.population_size)
         recentness = np.random.uniform(
-            low=self.range_recentness[0], high=self.range_recentness[1], size=self.population_size
+            low=self.boundary_recentness[0], high=self.boundary_recentness[1], size=self.population_size
         )
         frequency = np.random.uniform(
-            low=self.range_recentness[0], high=self.range_recentness[1], size=self.population_size
+            low=self.boundary_recentness[0], high=self.boundary_recentness[1], size=self.population_size
         )
         population = np.array([rho, nu, recentness, frequency]).T
         return population
