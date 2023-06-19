@@ -60,7 +60,7 @@ if __name__ == "__main__":
         qd_df["target"] = target
         qd_df["model"] = "Proposed"
 
-        ga_best_vecs = pd.read_csv(f"results/fitted/{target}/qd.csv")
+        ga_best_vecs = pd.read_csv(f"results/fitted/{target}/ga.csv")
         ga_best_diffs = (ga_best_vecs - emp).abs().sum(axis=1)
         ga_df = pd.DataFrame(data=ga_best_diffs, columns=["distance"])
         ga_df["target"] = target
