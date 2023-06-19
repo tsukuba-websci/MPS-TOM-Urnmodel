@@ -34,7 +34,7 @@ if __name__ == "__main__":
         "r": "R",
         "h": "<h>",
     }
-    color = ["#ff7f0e", "#1f77b4"]
+    color = ["#ff7f0e", "#1f77b4", "#9CDAA0"]
 
     fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
     fm.addfont("./STIXTwoText.ttf")
