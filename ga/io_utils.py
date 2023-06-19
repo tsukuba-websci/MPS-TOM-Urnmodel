@@ -43,7 +43,7 @@ def export_individual(
         individual (list): 個体を表すタプル．(rho, nu, recentness, frequency)の順
         fpath (str): 出力先のパス
     """
-    header = ["rho", "nu", "recentness", "frequency", "objective", "populasion_size", "mutation_rate", "cross_rate"]
+    header = ["rho", "nu", "recentness", "frequency", "distance", "populasion_size", "mutation_rate", "cross_rate"]
     objective = distance
     row = [*individual, objective, population_size, mutation_rate, cross_rate]
     with open(fpath, "w") as f:
