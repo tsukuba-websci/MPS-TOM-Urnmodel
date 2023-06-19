@@ -36,6 +36,7 @@ rsurn = {git = "https://github.com/tsukuba-websci/rsurn", rev = "69c588ec018d3a7
 julia = "0.6.0"
 sklearn = "^0.0.post5"
 matplotlib = "^3.7.1"
+seaborn = "^0.12.2"
 
 [build-system]
 requires = ["poetry-core"]
