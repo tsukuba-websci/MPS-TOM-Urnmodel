@@ -1,14 +1,11 @@
 import re
 import sys
 
+import matplotlib
 import pandas as pd
 import seaborn as sns
 from cycler import cycler
 from matplotlib import pyplot as plt
-
-my_red = "#FC8484"
-my_green = "#9CDAA0"
-my_blue = "#9CC3DA"
 
 if __name__ == "__main__":
     data = sys.argv[1]
@@ -38,6 +35,10 @@ if __name__ == "__main__":
         "r": "R",
         "h": "<h>",
     }
+
+    fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
+    fm.addfont("./STIXTwoText.ttf")
+    plt.rcParams["font.family"] = "STIX Two Text"
     plt.rcParams["axes.prop_cycle"] = cycler(color=["#FC8484", "#9CDAA0", "#F5C08B", "#F7E393"])
 
     df = pd.DataFrame()
