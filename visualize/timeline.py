@@ -10,15 +10,16 @@ if __name__ == "__main__":
     data = sys.argv[1]
     if data == "empirical":
         targets = ["aps", "twitter"]
-    # elif data == "synthetic":
-    #     targets = [
-    #         f"{data}/rho5_nu5_sSSW",
-    #         f"{data}/rho5_nu5_sWSW",
-    #         f"{data}/rho5_nu15_sSSW",
-    #         f"{data}/rho5_nu15_sWSW",
-    #         f"{data}/rho20_nu7_sSSW",
-    #         f"{data}/rho20_nu7_sWSW",
-    #     ]
+    elif data == "synthetic":
+        targets = [
+            # TODO: Best fitするターゲットデータを指定する
+            f"{data}/rho5_nu5_sSSW",
+            # f"{data}/rho5_nu5_sWSW",
+            # f"{data}/rho5_nu15_sSSW",
+            # f"{data}/rho5_nu15_sWSW",
+            # f"{data}/rho20_nu7_sSSW",
+            # f"{data}/rho20_nu7_sWSW",
+        ]
     else:
         raise ValueError("must be 'synthetic' or 'empirical'")
 
@@ -41,6 +42,8 @@ if __name__ == "__main__":
     plt.rcParams["font.family"] = "STIX Two Text"
 
     algorithms = ["ga", "qd"]
+
+    os.makedirs("results/timeline", exist_ok=True)
 
     for algorithm in algorithms:
         df = pd.DataFrame()
@@ -84,5 +87,5 @@ if __name__ == "__main__":
         plt.xlabel("Generation")
         plt.ylabel("d")
         plt.tight_layout()
-        plt.savefig(f"results/{algorithm}_timeline.png", dpi=300)
+        plt.savefig(f"results/timeline/{data}_{algorithm}.png", dpi=300)
         plt.close()
