@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 
@@ -6,6 +7,10 @@ import pandas as pd
 import seaborn as sns
 from cycler import cycler
 from matplotlib import pyplot as plt
+
+my_red = "#FC8484"
+my_green = "#9CDAA0"
+my_blue = "#9CC3DA"
 
 if __name__ == "__main__":
     data = sys.argv[1]
@@ -47,6 +52,8 @@ if __name__ == "__main__":
     )
     fs_results_mean = fs_results.groupby(by=["rho", "nu", "s"]).mean()
 
+    os.makedirs(f"results/bar_graph", exist_ok=True)
+
     if data == "empirical":
         for target in targets:
             emp = pd.read_csv(f"../data/{target}.csv").iloc[0]
@@ -86,7 +93,7 @@ if __name__ == "__main__":
         )
         plt.ylabel("d")
         plt.xlabel("")
-        plt.savefig("results/distances.png", dpi=300)
+        plt.savefig("results/bar_graph/empirical.png", dpi=300)
         plt.show()
         plt.close()
 
@@ -140,4 +147,4 @@ if __name__ == "__main__":
         )
         plt.ylabel("d")
         plt.tight_layout()
-        plt.savefig("results/synthetic_distances.png", dpi=300)
+        plt.savefig("results/bar_graph/synthetic.png", dpi=300)
