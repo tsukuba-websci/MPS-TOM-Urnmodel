@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 from typing import List, cast
 
@@ -11,15 +12,17 @@ if __name__ == "__main__":
     data = sys.argv[1]
     if data == "empirical":
         targets = ["aps", "twitter"]
-    # elif data == "synthetic":
-    #     targets = [
-    #         f"{data}/rho5_nu5_sSSW",
-    #         f"{data}/rho5_nu5_sWSW",
-    #         f"{data}/rho5_nu15_sSSW",
-    #         f"{data}/rho5_nu15_sWSW",
-    #         f"{data}/rho20_nu7_sSSW",
-    #         f"{data}/rho20_nu7_sWSW",
-    #     ]
+    elif data == "synthetic":
+        targets = [
+            f"{data}/rho5_nu5_sSSW",
+            f"{data}/rho5_nu5_sWSW",
+            f"{data}/rho5_nu15_sSSW",
+            f"{data}/rho5_nu15_sWSW",
+            f"{data}/rho20_nu7_sSSW",
+            f"{data}/rho20_nu7_sWSW",
+        ]
+        synthetic = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
+        synthetic_mean = synthetic.groupby(["rho", "nu", "s"]).mean()
     else:
         raise ValueError("must be 'synthetic' or 'empirical'")
 
@@ -41,10 +44,21 @@ if __name__ == "__main__":
     plt.rcParams["font.family"] = "STIX Two Text"
     plt.rcParams["font.size"] = 16
 
-    os.makedirs("results/radar_chart", exist_ok=True)
+    os.makedirs(f"results/radar_chart", exist_ok=True)
 
     for target in targets:
-        emp = pd.read_csv(f"../data/{target}.csv").iloc[0].sort_index()
+        if data == "empirical":
+            emp = pd.read_csv(f"../data/{target}.csv").iloc[0].sort_index()
+        else:
+            os.makedirs(f"results/radar_chart/synthetic", exist_ok=True)
+            pattern = r"synthetic/rho(\d+)_nu(\d+)_s(\w+)"
+            matches = re.match(pattern, target)
+            if matches:
+                rho = int(matches.group(1))
+                nu = int(matches.group(2))
+                s = matches.group(3)
+            emp = synthetic_mean.loc[(rho, nu, s), :].sort_index()
+
         fs_results = (
             pd.read_csv(f"../full-search/results/existing_full_search.csv").set_index(["rho", "nu", "s"]).sort_index()
         )
