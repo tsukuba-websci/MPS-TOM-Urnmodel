@@ -44,13 +44,13 @@ if __name__ == "__main__":
     plt.rcParams["font.family"] = "STIX Two Text"
     plt.rcParams["font.size"] = 16
 
-    os.makedirs(f"results/radar_chart", exist_ok=True)
+    os.makedirs("results/radar_chart", exist_ok=True)
 
     for target in targets:
         if data == "empirical":
             target_data = pd.read_csv(f"../data/{target}.csv").iloc[0].sort_index()
         else:
-            os.makedirs(f"results/radar_chart/synthetic", exist_ok=True)
+            os.makedirs("results/radar_chart/synthetic", exist_ok=True)
             pattern = r"synthetic/rho(\d+)_nu(\d+)_s(\w+)"
             matches = re.match(pattern, target)
             if matches:

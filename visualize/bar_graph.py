@@ -52,7 +52,7 @@ if __name__ == "__main__":
     )
     fs_results_mean = fs_results.groupby(by=["rho", "nu", "s"]).mean()
 
-    os.makedirs(f"results/bar_graph", exist_ok=True)
+    os.makedirs("results/bar_graph", exist_ok=True)
 
     if data == "empirical":
         for target in targets:
