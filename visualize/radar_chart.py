@@ -6,25 +6,25 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
+readable_metrics = {
+    "gamma": "γ",
+    "no": "NO",
+    "nc": "NC",
+    "oo": "OO",
+    "oc": "OC",
+    "c": "C",
+    "y": "Y",
+    "g": "G",
+    "r": "R",
+    "h": "<h>",
+}
+
+
+# 実データ・合成データ共にターゲットごとの10個の指標のレーダーチャートを作成する
+# 10回壺モデルを回した結果の平均値をプロットする
+
 
 def plot_radar_chart(data: str, targets) -> None:
-    if data == "synthetic":
-        synthetic = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
-        synthetic_mean = synthetic.groupby(["rho", "nu", "s"]).mean()
-
-    readable_metrics = {
-        "gamma": "γ",
-        "no": "NO",
-        "nc": "NC",
-        "oo": "OO",
-        "oc": "OC",
-        "c": "C",
-        "y": "Y",
-        "g": "G",
-        "r": "R",
-        "h": "<h>",
-    }
-
     os.makedirs("results/radar_chart", exist_ok=True)
 
     for target in targets:
@@ -38,7 +38,8 @@ def plot_radar_chart(data: str, targets) -> None:
                 rho = int(matches.group(1))
                 nu = int(matches.group(2))
                 s = matches.group(3)
-            target_data = synthetic_mean.loc[(rho, nu, s), :].sort_index()
+            synthetic = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
+            target_data = synthetic.loc[(rho, nu, s), :].mean().sort_index()
 
         fs_results = (
             pd.read_csv(f"../full-search/results/existing_full_search.csv").set_index(["rho", "nu", "s"]).sort_index()
@@ -71,4 +72,5 @@ def plot_radar_chart(data: str, targets) -> None:
         # plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0)
         plt.tight_layout()
         plt.savefig(f"results/radar_chart/{target}.png", dpi=300)
+        plt.show()
         plt.close()
