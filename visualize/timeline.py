@@ -1,32 +1,12 @@
 import os
-import sys
 
-import matplotlib
 import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 
-if __name__ == "__main__":
-    data = sys.argv[1]
-    if data == "empirical":
-        targets = ["aps", "twitter"]
-    elif data == "synthetic":
-        targets = [
-            f"{data}/rho5_nu5_sSSW",
-            f"{data}/rho5_nu5_sWSW",
-            f"{data}/rho5_nu15_sSSW",
-            f"{data}/rho5_nu15_sWSW",
-            f"{data}/rho20_nu7_sSSW",
-            f"{data}/rho20_nu7_sWSW",
-        ]
-    else:
-        raise ValueError("must be 'synthetic' or 'empirical'")
 
+def plot_timeline(data: str, targets) -> None:
     color = ["#ff7f0e", "#1f77b4", "#9CDAA0"]
-
-    fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
-    fm.addfont("./STIXTwoText.ttf")
-    plt.rcParams["font.family"] = "STIX Two Text"
 
     algorithms = ["ga", "qd"]
 

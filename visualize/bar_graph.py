@@ -1,8 +1,6 @@
 import os
 import re
-import sys
 
-import matplotlib
 import pandas as pd
 import seaborn as sns
 from cycler import cycler
@@ -12,38 +10,8 @@ my_red = "#FC8484"
 my_green = "#9CDAA0"
 my_blue = "#9CC3DA"
 
-if __name__ == "__main__":
-    data = sys.argv[1]
-    if data == "empirical":
-        targets = ["twitter", "aps"]
-    elif data == "synthetic":
-        targets = [
-            f"{data}/rho5_nu5_sSSW",
-            f"{data}/rho5_nu5_sWSW",
-            f"{data}/rho5_nu15_sSSW",
-            f"{data}/rho5_nu15_sWSW",
-            f"{data}/rho20_nu7_sSSW",
-            f"{data}/rho20_nu7_sWSW",
-        ]
-    else:
-        raise ValueError("must be 'synthetic' or 'empirical'")
 
-    readable_metrics = {
-        "gamma": "γ",
-        "no": "NO",
-        "nc": "NC",
-        "oo": "OO",
-        "oc": "OC",
-        "c": "C",
-        "y": "Y",
-        "g": "G",
-        "r": "R",
-        "h": "<h>",
-    }
-
-    fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
-    fm.addfont("./STIXTwoText.ttf")
-    plt.rcParams["font.family"] = "STIX Two Text"
+def plot_bar_graph(data: str, targets) -> None:
     plt.rcParams["axes.prop_cycle"] = cycler(color=["#FC8484", "#9CDAA0", "#F5C08B", "#F7E393"])
 
     df = pd.DataFrame()
@@ -94,7 +62,6 @@ if __name__ == "__main__":
         plt.ylabel("d")
         plt.xlabel("")
         plt.savefig("results/bar_graph/empirical.png", dpi=300)
-        plt.show()
         plt.close()
 
     else:
@@ -142,3 +109,4 @@ if __name__ == "__main__":
         plt.ylabel("d")
         plt.tight_layout()
         plt.savefig("results/bar_graph/synthetic.png", dpi=300)
+        plt.close()

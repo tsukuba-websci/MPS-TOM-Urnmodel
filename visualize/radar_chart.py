@@ -1,30 +1,16 @@
 import os
 import re
-import sys
 from typing import List, cast
 
-import matplotlib
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-if __name__ == "__main__":
-    data = sys.argv[1]
-    if data == "empirical":
-        targets = ["aps", "twitter"]
-    elif data == "synthetic":
-        targets = [
-            f"{data}/rho5_nu5_sSSW",
-            f"{data}/rho5_nu5_sWSW",
-            f"{data}/rho5_nu15_sSSW",
-            f"{data}/rho5_nu15_sWSW",
-            f"{data}/rho20_nu7_sSSW",
-            f"{data}/rho20_nu7_sWSW",
-        ]
+
+def plot_radar_chart(data: str, targets) -> None:
+    if data == "synthetic":
         synthetic = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
         synthetic_mean = synthetic.groupby(["rho", "nu", "s"]).mean()
-    else:
-        raise ValueError("must be 'synthetic' or 'empirical'")
 
     readable_metrics = {
         "gamma": "γ",
@@ -38,11 +24,6 @@ if __name__ == "__main__":
         "r": "R",
         "h": "<h>",
     }
-
-    fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
-    fm.addfont("./STIXTwoText.ttf")
-    plt.rcParams["font.family"] = "STIX Two Text"
-    plt.rcParams["font.size"] = 16
 
     os.makedirs("results/radar_chart", exist_ok=True)
 
@@ -90,5 +71,4 @@ if __name__ == "__main__":
         # plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0)
         plt.tight_layout()
         plt.savefig(f"results/radar_chart/{target}.png", dpi=300)
-        plt.show()
         plt.close()
