@@ -112,15 +112,12 @@ if __name__ == "__main__":
                 s = matches.group(3)
             target_mean = targets_mean.loc[(rho, nu, s), :]
             fs_mean = (fs_results_mean - target_mean).dropna(axis=1).abs().sum(axis=1).min()
-            fs_std = (fs_results - target_mean).abs().sum(axis=1).std()
 
             qd_best_vecs = pd.read_csv(f"results/fitted/{target}/qd.csv")
             qd_mean = (qd_best_vecs - target_mean).abs().sum(axis=1).mean()
-            qd_std = (qd_best_vecs - target_mean).abs().sum(axis=1).std()
 
             ga_best_vecs = pd.read_csv(f"results/fitted/{target}/ga.csv")
             ga_mean = (ga_best_vecs - target_mean).abs().sum(axis=1).mean()
-            ga_std = (ga_best_vecs - target_mean).abs().sum(axis=1).std()
 
             row = pd.Series(
                 {
@@ -128,11 +125,8 @@ if __name__ == "__main__":
                     "nu": nu,
                     "s": s,
                     "fs_mean": fs_mean,
-                    "fs_std": fs_std,
                     "qd_mean": qd_mean,
-                    "qd_std": qd_std,
                     "ga_mean": ga_mean,
-                    "ga_std": ga_std,
                 }
             )
             df = pd.concat([df, row.to_frame().T], ignore_index=True)
