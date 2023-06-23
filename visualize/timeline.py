@@ -5,7 +5,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 
-def archives2df(df, df_min, target, algorithm):
+def archives2df(df: pd.DataFrame, df_min: pd.DataFrame, target: str, algorithm: str):
     basedir = f"../{algorithm}/results/{target}/archives"
     files = sorted(os.listdir(basedir))
     for gen, file in enumerate(files):
@@ -20,7 +20,7 @@ def archives2df(df, df_min, target, algorithm):
     return df, df_min
 
 
-def plot(df, df_min, color_order):
+def plot(df: pd.DataFrame, df_min: pd.DataFrame, color_order: list):
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.lineplot(
         data=df_min,
@@ -44,7 +44,7 @@ def plot(df, df_min, color_order):
     )
 
 
-def plot_timeline(target_type: str, targets, my_color) -> None:
+def plot_timeline(target_type: str, targets: list, my_color: dict) -> None:
     algorithms = ["ga", "qd"]
 
     for algorithm in algorithms:
