@@ -55,6 +55,8 @@ def plot_bar_graph(data: str, targets) -> None:
             x="target",
             y="distance",
             errorbar="sd",
+            capsize=0.02,
+            errwidth=1.5,
             hue="model",
             palette={"Existing": my_red, "Proposed": my_green, "GA": my_blue},
             legend=False,  # type: ignore
@@ -70,8 +72,9 @@ def plot_bar_graph(data: str, targets) -> None:
         targets_data = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
         targets_mean = targets_data.groupby(["rho", "nu", "s"]).mean()
 
+        pattern = r"synthetic/rho(\d+)_nu(\d+)_s(SSW|WSW)"
+
         for target in targets:
-            pattern = r"synthetic/rho(\d+)_nu(\d+)_s(SSW|WSW)"
             matches = re.match(pattern, target)
             if matches:
                 rho = int(matches.group(1))
@@ -105,6 +108,7 @@ def plot_bar_graph(data: str, targets) -> None:
             height=df[["fs_mean", "qd_mean", "ga_mean"]].mean(),
             yerr=df[["fs_mean", "qd_mean", "ga_mean"]].std(),
             color=["#FC8484", "#9CDAA0", "#A0C2DA"],
+            capsize=4,
         )
         plt.ylabel("d")
         plt.tight_layout()
