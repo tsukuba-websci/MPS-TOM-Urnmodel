@@ -3,17 +3,10 @@ import re
 
 import pandas as pd
 import seaborn as sns
-from cycler import cycler
 from matplotlib import pyplot as plt
 
-my_red = "#FC8484"
-my_green = "#9CDAA0"
-my_blue = "#9CC3DA"
 
-
-def plot_bar_graph(data: str, targets) -> None:
-    plt.rcParams["axes.prop_cycle"] = cycler(color=["#FC8484", "#9CDAA0", "#F5C08B", "#F7E393"])
-
+def plot_bar_graph(data: str, targets, my_color) -> None:
     df = pd.DataFrame()
     fs_results = (
         pd.read_csv("../full-search/results/existing_full_search.csv").set_index(["rho", "nu", "s"]).sort_index()
@@ -58,7 +51,7 @@ def plot_bar_graph(data: str, targets) -> None:
             capsize=0.02,
             errwidth=1.5,
             hue="model",
-            palette={"Existing": my_red, "Proposed": my_green, "GA": my_blue},
+            palette={"Existing": my_color["red"], "Proposed": my_color["light_green"], "GA": my_color["light_blue"]},
             legend=False,  # type: ignore
         )
         plt.ylabel("d")
@@ -107,7 +100,7 @@ def plot_bar_graph(data: str, targets) -> None:
             x=["Full Search", "Quality Diversity", "GA"],
             height=df[["fs_mean", "qd_mean", "ga_mean"]].mean(),
             yerr=df[["fs_mean", "qd_mean", "ga_mean"]].std(),
-            color=["#FC8484", "#9CDAA0", "#A0C2DA"],
+            color=[my_color["red"], my_color["light_green"], my_color["light_blue"]],
             capsize=4,
         )
         plt.ylabel("d")

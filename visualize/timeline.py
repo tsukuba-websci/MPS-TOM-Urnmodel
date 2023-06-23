@@ -4,8 +4,6 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 
-color = ["#ff7f0e", "#1f77b4", "#9CDAA0"]
-
 
 def archives2df(df, df_min, target, algorithm):
     basedir = f"../{algorithm}/results/{target}/archives"
@@ -22,7 +20,7 @@ def archives2df(df, df_min, target, algorithm):
     return df, df_min
 
 
-def plot(df, df_min):
+def plot(df, df_min, color_order):
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.lineplot(
         data=df_min,
@@ -32,7 +30,7 @@ def plot(df, df_min):
         legend=False,
         linestyle="--",
         ax=ax,
-        palette=color,
+        palette=color_order,
     )
     sns.lineplot(
         data=df,
@@ -42,23 +40,26 @@ def plot(df, df_min):
         legend=False,
         ax=ax,
         alpha=0.3,
-        palette=color,
+        palette=color_order,
     )
 
 
-def plot_timeline(data: str, targets) -> None:
+def plot_timeline(data: str, targets, my_color) -> None:
     algorithms = ["ga", "qd"]
 
     for algorithm in algorithms:
         # 実データに対しては、全てのターゲットをまとめてプロット
         if data == "empirical":
+            color_order = [my_color["orange"], my_color["blue"]]
+            # color_order = [my_color["orange"], my_color["blue"], my_color["green"]]
+
             os.makedirs(f"results/timeline/{algorithm}", exist_ok=True)
 
             df = pd.DataFrame()
             df_min = pd.DataFrame()
             for target in targets:
                 df, df_min = archives2df(df, df_min, target, algorithm)
-            plot(df, df_min)
+            plot(df, df_min, color_order)
 
             plt.xlabel("Generation")
             plt.ylabel("d")
@@ -68,13 +69,14 @@ def plot_timeline(data: str, targets) -> None:
 
         # 合成データに対しては、ターゲットごとにプロット
         else:
+            color_order = [my_color["dark_red"]]
             os.makedirs(f"results/timeline/{algorithm}/synthetic", exist_ok=True)
 
             for target in targets:
                 df = pd.DataFrame()
                 df_min = pd.DataFrame()
                 df, df_min = archives2df(df, df_min, target, algorithm)
-                plot(df, df_min)
+                plot(df, df_min, color_order)
 
                 plt.xlabel("Generation")
                 plt.ylabel("d")

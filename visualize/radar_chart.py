@@ -24,7 +24,7 @@ readable_metrics = {
 # 10回壺モデルを回した結果の平均値をプロットする
 
 
-def plot_radar_chart(data: str, targets) -> None:
+def plot_radar_chart(data: str, targets, my_color) -> None:
     os.makedirs("results/radar_chart", exist_ok=True)
 
     for target in targets:
@@ -62,15 +62,14 @@ def plot_radar_chart(data: str, targets) -> None:
         theta = np.linspace(0, np.pi * 2, len(labels))
 
         fig, ax = plt.subplots(subplot_kw={"projection": "polar"})
-        ax.plot(theta, fs_values, label="existing", color="#FC8484")
-        ax.plot(theta, ga_values, label="Genetic Algorithm", color="#76ABCB")
-        ax.plot(theta, qd_values, label="proposed", color="#51BD56")
-        ax.plot(theta, target_values, label="target", color="#505050", linestyle="dashed")
+        ax.plot(theta, fs_values, label="existing", color=my_color["red"])
+        ax.plot(theta, ga_values, label="Genetic Algorithm", color=my_color["dark_blue"])
+        ax.plot(theta, qd_values, label="proposed", color=my_color["dark_green"])
+        ax.plot(theta, target_values, label="target", color=my_color["black"], linestyle="dashed")
         ax.set_xticks(theta)
         ax.set_xticklabels(labels, fontsize=20)
         ax.set_ylim(0, 1)
         # plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0)
         plt.tight_layout()
         plt.savefig(f"results/radar_chart/{target}.png", dpi=300)
-        plt.show()
         plt.close()

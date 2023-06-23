@@ -42,9 +42,22 @@ if __name__ == "__main__":
     plt.rcParams["font.family"] = "STIX Two Text"
     plt.rcParams["font.size"] = 16
 
+    my_color = {
+        "red": "#FC8484",
+        "dark_red": "#FA5050",
+        "light_blue": "#9CC3DA",
+        "light_green": "#9CDAA0",
+        "dark_blue": "#76ABCB",
+        "dark_green": "#51BD56",
+        "black": "#505050",
+        "orange": "#ff7f0e",
+        "blue": "#1f77b4",
+        "green": "#9CDAA0",
+    }
+
     if graph_type == "bar_graph":
-        plot_bar_graph(target_type, targets)
+        plot_bar_graph(target_type, targets, my_color)
     elif graph_type == "radar_chart":
-        plot_radar_chart(target_type, targets)
+        plot_radar_chart(target_type, targets, my_color)
     elif graph_type == "timeline":
-        plot_timeline(target_type, targets)
+        plot_timeline(target_type, targets, my_color)
