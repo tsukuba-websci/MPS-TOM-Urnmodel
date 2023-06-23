@@ -1,6 +1,6 @@
+import argparse
 import csv
 import os
-import sys
 from typing import Dict, cast
 
 import pandas as pd
@@ -10,7 +10,10 @@ from lib.julia_initializer import JuliaInitializer
 from lib.run_model import Params, run_model
 
 if __name__ == "__main__":
-    data = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("target_type", type=str, choices=["empirical", "synthetic"], help="データの種類")
+    data = parser.parse_args().target_type
+
     if data == "empirical":
         targets = ["aps", "twitter"]
     elif data == "synthetic":
@@ -22,8 +25,6 @@ if __name__ == "__main__":
             f"{data}/rho20_nu7_sSSW",
             f"{data}/rho20_nu7_sWSW",
         ]
-    else:
-        raise ValueError("must be 'synthetic' or 'empirical'")
 
     algorithms = ["ga", "qd"]
     jl_main, thread_num = JuliaInitializer().initialize()

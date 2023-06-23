@@ -1,53 +1,34 @@
 import os
 import re
-import sys
 from typing import List, cast
 
-import matplotlib
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
-if __name__ == "__main__":
-    data = sys.argv[1]
-    if data == "empirical":
-        targets = ["aps", "twitter"]
-    elif data == "synthetic":
-        targets = [
-            f"{data}/rho5_nu5_sSSW",
-            f"{data}/rho5_nu5_sWSW",
-            f"{data}/rho5_nu15_sSSW",
-            f"{data}/rho5_nu15_sWSW",
-            f"{data}/rho20_nu7_sSSW",
-            f"{data}/rho20_nu7_sWSW",
-        ]
-        synthetic = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
-        synthetic_mean = synthetic.groupby(["rho", "nu", "s"]).mean()
-    else:
-        raise ValueError("must be 'synthetic' or 'empirical'")
+readable_metrics = {
+    "gamma": "γ",
+    "no": "NO",
+    "nc": "NC",
+    "oo": "OO",
+    "oc": "OC",
+    "c": "C",
+    "y": "Y",
+    "g": "G",
+    "r": "R",
+    "h": "<h>",
+}
 
-    readable_metrics = {
-        "gamma": "γ",
-        "no": "NO",
-        "nc": "NC",
-        "oo": "OO",
-        "oc": "OC",
-        "c": "C",
-        "y": "Y",
-        "g": "G",
-        "r": "R",
-        "h": "<h>",
-    }
 
-    fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
-    fm.addfont("./STIXTwoText.ttf")
-    plt.rcParams["font.family"] = "STIX Two Text"
-    plt.rcParams["font.size"] = 16
+# 実データ・合成データ共にターゲットごとの10個の指標のレーダーチャートを作成する
+# 10回壺モデルを回した結果の平均値をプロットする
 
+
+def plot_radar_chart(target_type: str, targets: list, my_color: dict) -> None:
     os.makedirs("results/radar_chart", exist_ok=True)
 
     for target in targets:
-        if data == "empirical":
+        if target_type == "empirical":
             target_data = pd.read_csv(f"../data/{target}.csv").iloc[0].sort_index()
         else:
             os.makedirs("results/radar_chart/synthetic", exist_ok=True)
@@ -57,7 +38,8 @@ if __name__ == "__main__":
                 rho = int(matches.group(1))
                 nu = int(matches.group(2))
                 s = matches.group(3)
-            target_data = synthetic_mean.loc[(rho, nu, s), :].sort_index()
+            synthetic = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
+            target_data = synthetic.loc[(rho, nu, s), :].mean().sort_index()
 
         fs_results = (
             pd.read_csv(f"../full-search/results/existing_full_search.csv").set_index(["rho", "nu", "s"]).sort_index()
@@ -80,15 +62,14 @@ if __name__ == "__main__":
         theta = np.linspace(0, np.pi * 2, len(labels))
 
         fig, ax = plt.subplots(subplot_kw={"projection": "polar"})
-        ax.plot(theta, fs_values, label="existing", color="#FC8484")
-        ax.plot(theta, ga_values, label="Genetic Algorithm", color="#76ABCB")
-        ax.plot(theta, qd_values, label="proposed", color="#51BD56")
-        ax.plot(theta, target_values, label="target", color="#505050", linestyle="dashed")
+        ax.plot(theta, fs_values, label="existing", color=my_color["red"])
+        ax.plot(theta, ga_values, label="Genetic Algorithm", color=my_color["dark_blue"])
+        ax.plot(theta, qd_values, label="proposed", color=my_color["dark_green"])
+        ax.plot(theta, target_values, label="target", color=my_color["black"], linestyle="dashed")
         ax.set_xticks(theta)
         ax.set_xticklabels(labels, fontsize=20)
         ax.set_ylim(0, 1)
         # plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0)
         plt.tight_layout()
         plt.savefig(f"results/radar_chart/{target}.png", dpi=300)
-        plt.show()
         plt.close()
