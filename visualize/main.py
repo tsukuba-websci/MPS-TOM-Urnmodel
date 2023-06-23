@@ -4,9 +4,9 @@ import matplotlib
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from visualize.bar_graph import plot_bar_graph
-from visualize.radar_chart import plot_radar_chart
-from visualize.timeline import plot_timeline
+from visualize.graphs.bar_graph import plot_bar_graph
+from visualize.graphs.radar_chart import plot_radar_chart
+from visualize.graphs.timeline import plot_timeline
 
 
 def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
