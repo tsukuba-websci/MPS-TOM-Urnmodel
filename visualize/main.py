@@ -10,7 +10,7 @@ from visualize.timeline import plot_timeline
 
 
 def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
-    parser.add_argument("graph_type", type=str, choices=["bar_graph", "radar_chart", "timeline"], help="グラフの種類")
+    parser.add_argument("graph_type", type=str, choices=["bar", "radar", "timeline"], help="グラフの種類")
     parser.add_argument("target_type", type=str, choices=["empirical", "synthetic"], help="データの種類")
     args = parser.parse_args()
     return args
@@ -55,9 +55,9 @@ if __name__ == "__main__":
         "green": "#9CDAA0",
     }
 
-    if graph_type == "bar_graph":
+    if graph_type == "bar":
         plot_bar_graph(target_type, targets, my_color)
-    elif graph_type == "radar_chart":
+    elif graph_type == "radar":
         plot_radar_chart(target_type, targets, my_color)
     elif graph_type == "timeline":
         plot_timeline(target_type, targets, my_color)

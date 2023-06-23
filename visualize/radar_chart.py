@@ -24,11 +24,11 @@ readable_metrics = {
 # 10回壺モデルを回した結果の平均値をプロットする
 
 
-def plot_radar_chart(data: str, targets, my_color) -> None:
+def plot_radar_chart(target_type: str, targets, my_color) -> None:
     os.makedirs("results/radar_chart", exist_ok=True)
 
     for target in targets:
-        if data == "empirical":
+        if target_type == "empirical":
             target_data = pd.read_csv(f"../data/{target}.csv").iloc[0].sort_index()
         else:
             os.makedirs("results/radar_chart/synthetic", exist_ok=True)

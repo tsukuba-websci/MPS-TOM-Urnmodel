@@ -6,7 +6,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 
 
-def plot_bar_graph(data: str, targets, my_color) -> None:
+def plot_bar_graph(target_type: str, targets, my_color) -> None:
     df = pd.DataFrame()
     fs_results = (
         pd.read_csv("../full-search/results/existing_full_search.csv").set_index(["rho", "nu", "s"]).sort_index()
@@ -15,7 +15,7 @@ def plot_bar_graph(data: str, targets, my_color) -> None:
 
     os.makedirs("results/bar_graph", exist_ok=True)
 
-    if data == "empirical":
+    if target_type == "empirical":
         for target in targets:
             emp = pd.read_csv(f"../data/{target}.csv").iloc[0]
 

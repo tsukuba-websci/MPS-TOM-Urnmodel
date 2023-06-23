@@ -44,12 +44,12 @@ def plot(df, df_min, color_order):
     )
 
 
-def plot_timeline(data: str, targets, my_color) -> None:
+def plot_timeline(target_type: str, targets, my_color) -> None:
     algorithms = ["ga", "qd"]
 
     for algorithm in algorithms:
         # 実データに対しては、全てのターゲットをまとめてプロット
-        if data == "empirical":
+        if target_type == "empirical":
             color_order = [my_color["orange"], my_color["blue"]]
             # color_order = [my_color["orange"], my_color["blue"], my_color["green"]]
 
@@ -64,7 +64,7 @@ def plot_timeline(data: str, targets, my_color) -> None:
             plt.xlabel("Generation")
             plt.ylabel("d")
             plt.tight_layout()
-            plt.savefig(f"results/timeline/{algorithm}/{data}.png", dpi=300)
+            plt.savefig(f"results/timeline/{algorithm}/{target_type}.png", dpi=300)
             plt.close()
 
         # 合成データに対しては、ターゲットごとにプロット
