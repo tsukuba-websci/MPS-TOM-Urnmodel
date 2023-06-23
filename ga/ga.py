@@ -19,7 +19,6 @@ class GA:
         mutation_rate: float,
         cross_rate: float,
         target: History2VecResult,
-        target_data: str,
         num_generations: int,
         jl_main: Any,
         thread_num: int,
@@ -36,7 +35,6 @@ class GA:
         self.boundary_rho = boundary_rho
         self.boundary_recentness = boundary_recentness
         self.target = target
-        self.target_data = target_data
         self.jl_main = jl_main
         self.thread_num = thread_num
         self.histories = [[] for _ in range(self.population_size)]

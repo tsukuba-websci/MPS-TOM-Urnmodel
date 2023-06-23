@@ -31,20 +31,16 @@ def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
 
 
 class GridSearch:
-    def __init__(
-        self, target: History2VecResult, target_data: str, output_dir: str, jl_main: Any, thread_num: int, force: bool
-    ):
+    def __init__(self, target: History2VecResult, output_dir: str, jl_main: Any, thread_num: int, force: bool):
         """コンストラクタ．
         Args:
             target (History2VecResult): ターゲット
-            target_data (str): ターゲットデータ
             output_dir (str): 出力先のディレクトリ
             jl_main (Any): Juliaのmain関数
             thread_num (int): Juliaのスレッド数
             force (bool): 既存のファイルを上書きするかどうか
         """
         self.target = target
-        self.target_data = target_data
         self.output_dir = output_dir
         self.jl_main = jl_main
         self.thread_num = thread_num
@@ -74,7 +70,6 @@ class GridSearch:
                         continue
                     result = GA(
                         target=self.target,
-                        target_data=self.target_data,
                         num_generations=num_generations,
                         population_size=population_size,
                         mutation_rate=mutation_rate,
@@ -135,7 +130,7 @@ def main():
     num_generations = 100
     output_dir = f"./results/grid_search/{target_data}"
     os.makedirs(output_dir, exist_ok=True)
-    gs = GridSearch(target, target_data, output_dir, jl_main, thread_num, force)
+    gs = GridSearch(target, output_dir, jl_main, thread_num, force)
     gs.search(mutation_rate_iter, cross_rate_iter, population_size_iter, num_generations)
 
 
