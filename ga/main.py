@@ -55,7 +55,6 @@ def run(
 
     ga = GA(
         target=target,
-        target_data=target_data,
         num_generations=num_generations,
         population_size=population_size,
         mutation_rate=mutation_rate,
