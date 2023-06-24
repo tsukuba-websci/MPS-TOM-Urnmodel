@@ -40,7 +40,6 @@ if __name__ == "__main__":
     fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
     fm.addfont("./STIXTwoText.ttf")
     plt.rcParams["font.family"] = "STIX Two Text"
-    plt.rcParams["font.size"] = 16
 
     my_color = {
         "red": "#FC8484",
