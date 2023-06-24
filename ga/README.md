@@ -33,14 +33,29 @@
 
 ## 実行方法
 
+### 本実験
 このディレクトリ（`/ga`）に移動した上で，`main.py` を実行してください．
 
 ```bash
 $ cd ga
 $ pwd # => /path/to/ga
-$ python main.py <population_size> <mutation_rate> <cross_rate> <target_dataset>
+$ python main.py <population_size> <mutation_rate> <cross_rate> <target_data>  [rho] [nu] [s]
 ```
 
 各引数の詳細などは `python main.py -h` あるいは `python main.py --help` で確認できます．
 
-実行を行うと，`./results/<target_data>` 以下に結果が保存されます．より正確には，`./results/<target_data>` にナンバリングされたディレクトリが作成され，その中に各世代ごとのアーカイブデータと，最終的な結果（最も適合度の高い個体のデータと，その個体によって生成されたネットワークのメトリクス）が保存されます．
+実行を行うと，`./results/<target_data>` 以下に結果が保存されます．より正確には，`./results/<target_data>` にディレクトリが作成され，その中に各世代ごとのアーカイブデータと，最終的な結果（最も適合度の高い個体のデータと，その個体によって生成されたネットワークのメトリクス）が保存されます．
+
+### グリッドサーチ
+ターゲットデータごとに適した個体数、突然変異率、交差率を探索するためにグリッドサーチを行う場合は、`grid_search.py`を実行してください。
+```bash
+$ pwd # => /path/to/ga
+$ python grid_search.py <target_data>  [rho] [nu] [s]
+```
+結果は`results/grid_search/`以下にjson形式で保存されます。
+
+グリッドサーチの結果から最適な個体数、突然変異率、交差率を見つけるには、`search_best.py`を実行してください。
+```bash
+$ pwd # => /path/to/ga
+$ python search_best.py <target_data>  [rho] [nu] [s]
+```
