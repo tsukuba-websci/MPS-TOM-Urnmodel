@@ -52,7 +52,7 @@ $ python main.py <population_size> <mutation_rate> <cross_rate> <target_data>  [
 $ pwd # => /path/to/ga
 $ python grid_search.py <target_data>  [rho] [nu] [s]
 ```
-結果は`results/grid_search/`以下にjson形式で保存されます。
+結果は`results/grid_search/`以下にjson形式で保存されます。`grid_search.py`の実行にはMac Book Pro(M1 Pro, 32GB)で1つのターゲットデータに対して丸1日程度かかるので注意してください。
 
 グリッドサーチの結果から最適な個体数、突然変異率、交差率を見つけるには、`search_best.py`を実行してください。
 ```bash

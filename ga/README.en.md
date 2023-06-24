@@ -53,7 +53,7 @@ To perform a grid search to find suitable population size, mutation rate, and cr
 $ pwd # => /path/to/ga
 $ python grid_search.py <target_data>  [rho] [nu] [s]
 ```
-The results will be saved in json format under `results/grid_search/`.
+The results will be saved in json format under `results/grid_search/`. Note that it takes about one full day to run `grid_search.py` on a Mac Book Pro (M1 Pro, 32GB) for one target data.
 
 To find the best population size, mutation rate, and crossover rate from the grid search results, run `search_best.py`.
 ```bash
