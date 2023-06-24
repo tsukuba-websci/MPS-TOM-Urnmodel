@@ -4,6 +4,8 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 
+plt.rcParams["font.size"] = 16
+
 
 def archives2df(df: pd.DataFrame, df_min: pd.DataFrame, target: str, algorithm: str):
     basedir = f"../{algorithm}/results/{target}/archives"
