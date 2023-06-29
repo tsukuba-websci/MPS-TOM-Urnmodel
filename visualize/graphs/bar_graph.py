@@ -5,6 +5,11 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 
+target_labels = {
+    "twitter": "TMN",
+    "aps": "APS",
+}
+
 
 def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
     df = pd.DataFrame()
@@ -23,19 +28,19 @@ def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
             fs_best_vecs = fs_results.loc[fs_best_params, :]
             fs_best_diffs = (fs_best_vecs - emp).abs().sum(axis=1)
             fs_df = pd.DataFrame(data=fs_best_diffs, columns=["distance"])
-            fs_df["target"] = target
+            fs_df["target"] = target_labels[target]
             fs_df["model"] = "Existing"
 
             qd_best_vecs = pd.read_csv(f"results/fitted/{target}/qd.csv")
             qd_best_diffs = (qd_best_vecs - emp).abs().sum(axis=1)
             qd_df = pd.DataFrame(data=qd_best_diffs, columns=["distance"])
-            qd_df["target"] = target
+            qd_df["target"] = target_labels[target]
             qd_df["model"] = "Proposed"
 
             ga_best_vecs = pd.read_csv(f"results/fitted/{target}/ga.csv")
             ga_best_diffs = (ga_best_vecs - emp).abs().sum(axis=1)
             ga_df = pd.DataFrame(data=ga_best_diffs, columns=["distance"])
-            ga_df["target"] = target
+            ga_df["target"] = target_labels[target]
             ga_df["model"] = "GA"
 
             df = pd.concat([df, fs_df, qd_df, ga_df], ignore_index=True)
