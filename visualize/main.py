@@ -51,7 +51,7 @@ if __name__ == "__main__":
         "black": "#505050",
         "orange": "#ff7f0e",
         "blue": "#1f77b4",
-        "green": "#9CDAA0",
+        "green": "#2ca02c",
     }
 
     if graph_type == "bar":
