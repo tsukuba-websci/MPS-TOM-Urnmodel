@@ -16,17 +16,19 @@ if __name__ == "__main__":
         choices=["twitter", "aps", "synthetic"],
         help="ターゲットデータ",
     )
+    arg_parser.add_argument("dim", type=int, choices=[64, 128, 256], help="dimensionality of embedding in graph2vec")
     arg_parser.add_argument("rho", type=int, nargs="?", default=None, help="rho")
     arg_parser.add_argument("nu", type=int, nargs="?", default=None, help="nu")
     arg_parser.add_argument("s", type=str, nargs="?", default=None, choices=["SSW", "WSW"], help="strategy")
     args = arg_parser.parse_args()
 
     target_name: str = args.target_name
+    dim: int = args.dim
 
     # load models about the axes of QD
     history2bd = History2BD(
-        graph2vec_model_path="./models/graph2vec.pkl",
-        standardize_model_path="./models/standardize.pkl",
+        graph2vec_model_path=f"./models/{dim}/graph2vec.pkl",
+        standardize_model_path=f"./models/{dim}/standardize.pkl",
     )
 
     # read target data
@@ -63,5 +65,6 @@ if __name__ == "__main__":
         target=target,
         history2bd=history2bd,
         iteration_num=num_generations,
+        dim=dim,
     )
     qds.run()

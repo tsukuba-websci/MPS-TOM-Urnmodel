@@ -32,11 +32,13 @@ class QualityDiversitySearch:
         target: History2VecResult,
         history2bd: History2BD,
         iteration_num: int,
+        dim: int,
     ) -> None:
         self.target = target
         self.history2bd = history2bd
         self.target_name = target_name
         self.iteration_num = iteration_num
+        self.dim = dim
 
         self.result_dir_path = f"results/{self.target_name}"
         self.archives_dir_path = f"{self.result_dir_path}/archives"
@@ -55,7 +57,7 @@ class QualityDiversitySearch:
             archive = CVTArchive(
                 solution_dim=4,
                 cells=500,
-                ranges=[(-5, 5) for _ in range(128)],
+                ranges=[(-5, 5) for _ in range(self.dim)],
             )
         assert archive is not None, "archive should not be None!"
 
