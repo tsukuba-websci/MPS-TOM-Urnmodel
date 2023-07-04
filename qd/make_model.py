@@ -30,17 +30,19 @@ if __name__ == "__main__":
             tqdm_bar.update(1)
     tqdm_bar.close()
 
-    graph2vec_model = Graph2Vec()
-    graph2vec_model.fit(graphs)
-    graph_features = graph2vec_model.get_embedding()
+    dims = [64, 128, 256]
+    for dim in dims:
+        dir = f"models/{dim}"
+        os.makedirs(dir, exist_ok=True)
 
-    standardize_model = StandardScaler()
-    std_graph_features = standardize_model.fit_transform(graph_features)
+        graph2vec_model = Graph2Vec(dimensions=dim)
+        graph2vec_model.fit(graphs)
+        graph_features = graph2vec_model.get_embedding()
 
-    dir = "models"
-    os.makedirs(dir, exist_ok=True)
-    with open(f"{dir}/graph2vec.pkl", "wb") as f:
-        pickle.dump(graph2vec_model, f)
+        standardize_model = StandardScaler()
+        std_graph_features = standardize_model.fit_transform(graph_features)
 
-    with open(f"{dir}/standardize.pkl", "wb") as f:
-        pickle.dump(standardize_model, f)
+        with open(f"{dir}/graph2vec.pkl", "wb") as f:
+            pickle.dump(graph2vec_model, f)
+        with open(f"{dir}/standardize.pkl", "wb") as f:
+            pickle.dump(standardize_model, f)
