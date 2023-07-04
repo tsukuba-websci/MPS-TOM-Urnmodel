@@ -25,6 +25,7 @@ class QualityDiversitySearch:
     result_dir_path: str
     archives_dir_path: str
     iteration_num: int
+    is_params_search: bool
 
     def __init__(
         self,
@@ -33,14 +34,18 @@ class QualityDiversitySearch:
         history2bd: History2BD,
         iteration_num: int,
         dim: int,
+        is_params_search: bool,
     ) -> None:
         self.target = target
         self.history2bd = history2bd
         self.target_name = target_name
         self.iteration_num = iteration_num
         self.dim = dim
-
-        self.result_dir_path = f"results/{self.target_name}"
+        self.is_params_search = is_params_search
+        if is_params_search:
+            self.result_dir_path = f"results/params-search/{self.target_name}/{self.dim}"
+        else:
+            self.result_dir_path = f"results/{self.target_name}"
         self.archives_dir_path = f"{self.result_dir_path}/archives"
 
         os.makedirs(self.archives_dir_path, exist_ok=True)
