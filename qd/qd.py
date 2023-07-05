@@ -55,8 +55,8 @@ class QualityDiversitySearch:
         history2vec_ = History2Vec(self.jl_main, self.thread_num)
 
         archive: Union[CVTArchive, None] = None
-        if os.path.exists(f"{self.archives_dir_path}/archive.pkl"):
-            with open(f"{self.archives_dir_path}/archive.pkl", "rb") as f:
+        if os.path.exists(f"{self.result_dir_path}/archive.pkl"):
+            with open(f"{self.result_dir_path}/archive.pkl", "rb") as f:
                 archive = pickle.load(f)
         else:
             archive = CVTArchive(
