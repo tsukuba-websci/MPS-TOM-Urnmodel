@@ -5,6 +5,7 @@ import pandas as pd
 from history2bd.main import History2BD
 
 from lib.history2vec import History2VecResult
+from lib.julia_initializer import JuliaInitializer
 from qd import QualityDiversitySearch
 
 if __name__ == "__main__":
@@ -16,17 +17,21 @@ if __name__ == "__main__":
         choices=["twitter", "aps", "synthetic"],
         help="ターゲットデータ",
     )
+    arg_parser.add_argument("dim", type=int, choices=[64, 128, 256], help="dimensionality of embedding in graph2vec")
+    arg_parser.add_argument("cells", type=int, help="number of cells in archive")
     arg_parser.add_argument("rho", type=int, nargs="?", default=None, help="rho")
     arg_parser.add_argument("nu", type=int, nargs="?", default=None, help="nu")
     arg_parser.add_argument("s", type=str, nargs="?", default=None, choices=["SSW", "WSW"], help="strategy")
     args = arg_parser.parse_args()
 
     target_name: str = args.target_name
+    dim: int = args.dim
+    cells: int = args.cells
 
     # load models about the axes of QD
     history2bd = History2BD(
-        graph2vec_model_path="./models/graph2vec.pkl",
-        standardize_model_path="./models/standardize.pkl",
+        graph2vec_model_path=f"./models/dim{dim}/graph2vec.pkl",
+        standardize_model_path=f"./models/dim{dim}/standardize.pkl",
     )
 
     # read target data
@@ -57,11 +62,18 @@ if __name__ == "__main__":
         target = History2VecResult(**df)
         num_generations = 500
 
+    # Set Up Julia
+    jl_main, thread_num = JuliaInitializer().initialize()
+
     # run QD
     qds = QualityDiversitySearch(
         target_name=target_name,
         target=target,
         history2bd=history2bd,
         iteration_num=num_generations,
+        thread_num=thread_num,
+        jl_main=jl_main,
+        dim=dim,
+        cells=cells,
     )
     qds.run()
