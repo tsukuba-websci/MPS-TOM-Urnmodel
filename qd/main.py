@@ -17,20 +17,20 @@ if __name__ == "__main__":
         help="ターゲットデータ",
     )
     arg_parser.add_argument("dim", type=int, choices=[64, 128, 256], help="dimensionality of embedding in graph2vec")
+    arg_parser.add_argument("cells", type=int, help="number of cells in archive")
     arg_parser.add_argument("rho", type=int, nargs="?", default=None, help="rho")
     arg_parser.add_argument("nu", type=int, nargs="?", default=None, help="nu")
     arg_parser.add_argument("s", type=str, nargs="?", default=None, choices=["SSW", "WSW"], help="strategy")
-    arg_parser.add_argument("--params_search", action="store_true", default=False, help="パラメータを探す。出力先を変更する")
     args = arg_parser.parse_args()
 
     target_name: str = args.target_name
     dim: int = args.dim
-    is_params_search: bool = args.params_search
+    cells: int = args.cells
 
     # load models about the axes of QD
     history2bd = History2BD(
-        graph2vec_model_path=f"./models/{dim}/graph2vec.pkl",
-        standardize_model_path=f"./models/{dim}/standardize.pkl",
+        graph2vec_model_path=f"./models/dim{dim}/graph2vec.pkl",
+        standardize_model_path=f"./models/dim{dim}/standardize.pkl",
     )
 
     # read target data
@@ -59,10 +59,7 @@ if __name__ == "__main__":
         target_csv = f"../data/{target_name}.csv"
         df = cast(Dict[str, float], pd.read_csv(target_csv).iloc[0].to_dict())
         target = History2VecResult(**df)
-        if is_params_search:
-            num_generations = 100
-        else:
-            num_generations = 500
+        num_generations = 500
 
     # run QD
     qds = QualityDiversitySearch(
@@ -71,6 +68,6 @@ if __name__ == "__main__":
         history2bd=history2bd,
         iteration_num=num_generations,
         dim=dim,
-        is_params_search=is_params_search,
+        cells=cells,
     )
     qds.run()

@@ -34,18 +34,15 @@ class QualityDiversitySearch:
         history2bd: History2BD,
         iteration_num: int,
         dim: int,
-        is_params_search: bool,
+        cells: int,
     ) -> None:
         self.target = target
         self.history2bd = history2bd
         self.target_name = target_name
         self.iteration_num = iteration_num
         self.dim = dim
-        self.is_params_search = is_params_search
-        if is_params_search:
-            self.result_dir_path = f"results/params-search/{self.target_name}/{self.dim}"
-        else:
-            self.result_dir_path = f"results/{self.target_name}"
+        self.cells = cells
+        self.result_dir_path = f"results/{self.target_name}/cells{self.cells}/dim{self.dim}"
         self.archives_dir_path = f"{self.result_dir_path}/archives"
 
         os.makedirs(self.archives_dir_path, exist_ok=True)
@@ -61,7 +58,7 @@ class QualityDiversitySearch:
         else:
             archive = CVTArchive(
                 solution_dim=4,
-                cells=500,
+                cells=self.cells,
                 ranges=[(-5, 5) for _ in range(self.dim)],
             )
         assert archive is not None, "archive should not be None!"
