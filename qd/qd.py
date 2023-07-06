@@ -36,6 +36,7 @@ class QualityDiversitySearch:
         jl_main: Any,
         dim: int,
         cells: int,
+        result_dir_path: str,
     ) -> None:
         self.target = target
         self.history2bd = history2bd
@@ -45,7 +46,7 @@ class QualityDiversitySearch:
         self.jl_main = jl_main
         self.dim = dim
         self.cells = cells
-        self.result_dir_path = f"results/{self.target_name}/cells{self.cells}/dim{self.dim}"
+        self.result_dir_path = result_dir_path
         self.archives_dir_path = f"{self.result_dir_path}/archives"
 
         os.makedirs(self.archives_dir_path, exist_ok=True)
