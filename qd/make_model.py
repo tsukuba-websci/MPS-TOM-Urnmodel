@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     dims = [64, 128, 256]
     for dim in dims:
-        dir = f"models/{dim}"
+        dir = f"models/dim{dim}"
         os.makedirs(dir, exist_ok=True)
 
         graph2vec_model = Graph2Vec(dimensions=dim)
