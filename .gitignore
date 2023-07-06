@@ -159,4 +159,5 @@ cython_debug/
 #.idea/
 
 results/
+models/
 .DS_Store
