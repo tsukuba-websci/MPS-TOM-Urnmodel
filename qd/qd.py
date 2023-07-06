@@ -24,7 +24,6 @@ class QualityDiversitySearch:
     result_dir_path: str
     archives_dir_path: str
     iteration_num: int
-    is_params_search: bool
 
     def __init__(
         self,
