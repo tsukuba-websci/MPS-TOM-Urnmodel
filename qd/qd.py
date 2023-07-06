@@ -65,7 +65,7 @@ class QualityDiversitySearch:
         assert archive is not None, "archive should not be None!"
         return archive
 
-    def save_archive(self, archive: CVTArchive) -> pd.DataFrame:
+    def save_archive(self, archive: CVTArchive, iter: int) -> pd.DataFrame:
         # save latest archive
         with open(f"{self.result_dir_path}/archive.pkl", "wb") as file:
             pickle.dump(archive, file)
@@ -160,7 +160,7 @@ class QualityDiversitySearch:
             optimizer.tell(objs, bcs)
 
             # save archive
-            df = self.save_archive(archive)
+            df = self.save_archive(archive, iter)
 
             if iter % 25 == 0:
                 self.print_status(archive, iter, start_time)
