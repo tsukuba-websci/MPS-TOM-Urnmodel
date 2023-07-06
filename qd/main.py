@@ -5,6 +5,7 @@ import pandas as pd
 from history2bd.main import History2BD
 
 from lib.history2vec import History2VecResult
+from lib.julia_initializer import JuliaInitializer
 from qd import QualityDiversitySearch
 
 if __name__ == "__main__":
@@ -61,12 +62,17 @@ if __name__ == "__main__":
         target = History2VecResult(**df)
         num_generations = 500
 
+    # Set Up Julia
+    jl_main, thread_num = JuliaInitializer().initialize()
+
     # run QD
     qds = QualityDiversitySearch(
         target_name=target_name,
         target=target,
         history2bd=history2bd,
         iteration_num=num_generations,
+        thread_num=thread_num,
+        jl_main=jl_main,
         dim=dim,
         cells=cells,
     )

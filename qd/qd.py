@@ -12,7 +12,6 @@ from ribs.archives import CVTArchive
 from tqdm import tqdm
 
 from lib.history2vec import History2Vec, History2VecResult
-from lib.julia_initializer import JuliaInitializer
 from lib.run_model import Params, run_model
 
 
@@ -33,6 +32,8 @@ class QualityDiversitySearch:
         target: History2VecResult,
         history2bd: History2BD,
         iteration_num: int,
+        thread_num: int,
+        jl_main: Any,
         dim: int,
         cells: int,
     ) -> None:
@@ -40,6 +41,8 @@ class QualityDiversitySearch:
         self.history2bd = history2bd
         self.target_name = target_name
         self.iteration_num = iteration_num
+        self.thread_num = thread_num
+        self.jl_main = jl_main
         self.dim = dim
         self.cells = cells
         self.result_dir_path = f"results/{self.target_name}/cells{self.cells}/dim{self.dim}"
@@ -48,7 +51,6 @@ class QualityDiversitySearch:
         os.makedirs(self.archives_dir_path, exist_ok=True)
 
     def run(self):
-        self.jl_main, self.thread_num = JuliaInitializer().initialize()
         history2vec_ = History2Vec(self.jl_main, self.thread_num)
 
         archive: Union[CVTArchive, None] = None
