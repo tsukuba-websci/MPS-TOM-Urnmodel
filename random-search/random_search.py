@@ -79,6 +79,7 @@ class RandomSearch:
             return False
         if f < -1 or f > 1:
             return False
+        return True
 
     def search(self) -> None:
         """ランダムサーチによる遺伝子探索を行う．
