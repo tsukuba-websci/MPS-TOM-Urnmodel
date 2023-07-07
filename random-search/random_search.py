@@ -2,7 +2,7 @@ from typing import Any, List, Tuple
 
 import numpy as np
 
-from lib.history2vec import History2VecResult, History2Vec
+from lib.history2vec import History2Vec, History2VecResult
 from lib.run_model import Params, run_model
 
 
