@@ -52,8 +52,9 @@ class RandomSearch:
         """
         rho = np.random.randint(0, 30)
         nu = np.random.randint(0, 30)
-        r = np.random.rand()
-        f = np.random.rand()
+        # r, f は -1 から 1 の間の実数
+        r = np.random.rand() * 2 - 1
+        f = np.random.rand() * 2 - 1
         solution = (rho, nu, r, f)
         if not self._validate(solution):
             raise ValueError("invalid solution was generated")
@@ -73,11 +74,9 @@ class RandomSearch:
             return False
         if nu < 0 or nu > 30:
             return False
-        # TODO: r, f の探索範囲は正しいのか確認する
-        # r, f は 0 以上 1 以下として探索する
-        if r < 0 or r > 1:
+        if r < -1 or r > 1:
             return False
-        if f < 0 or f > 1:
+        if f < -1 or f > 1:
             return False
 
     def search(self) -> None:
