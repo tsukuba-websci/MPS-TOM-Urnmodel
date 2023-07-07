@@ -2,6 +2,8 @@ import csv
 import os
 from argparse import ArgumentParser, Namespace
 
+import pandas as pd
+
 from random_search import RandomSearch
 
 from lib.history2vec import History2VecResult
@@ -44,7 +46,25 @@ def main():
 
     if args.target == "synthetic":
         fp = "../data/synthetic_target.csv"
-        # TODO: 合成データはまだ対応していないので，あとで実装する
+        rho = input("rho: ")
+        nu = input("nu: ")
+        s = input("s: ")
+
+        history2vec_results = pd.read_csv("../data/synthetic_target.csv").groupby(["rho", "nu", "s"]).mean()
+        row = history2vec_results.query(f"rho == {rho} and nu == {nu} and s == '{s}'").iloc[0]
+        target = History2VecResult(
+            gamma=row.gamma,
+            no=row.no,
+            nc=row.nc,
+            oo=row.oo,
+            oc=row.oc,
+            c=row.c,
+            y=row.y,
+            g=row.g,
+            r=row.r,
+            h=row.h,
+        )
+
     else:
         fp = f"../data/{args.target}.csv"
         with open(fp) as f:
@@ -77,7 +97,11 @@ def main():
 
     # アーカイブをダンプする
     os.makedirs("./archive", exist_ok=True)
-    with open(f"./archive/{args.target}.csv", "w") as f:
+    if args.target == "synthetic":
+        fp = f"./archive/synthetic_rho{rho}_nu{nu}_s{s}.csv"
+    else:
+        fp = f"./archive/{args.target}.csv"
+    with open(fp, "w") as f:
         writer = csv.writer(f)
         writer.writerow(["rho", "nu", "r", "f", "objective"])
         for solution, objective in rs.archive:
