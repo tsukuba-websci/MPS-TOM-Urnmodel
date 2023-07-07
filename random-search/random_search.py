@@ -14,8 +14,9 @@ class RandomSearch:
         num_generations: int,
         jl_main: Any,
         thread_num: int,
+        target: History2VecResult = None,
     ) -> None:
-        self.target = History2VecResult()
+        self.target = target
         self.num_generations = num_generations
         self.jl_main = jl_main
         self.thread_num = thread_num
