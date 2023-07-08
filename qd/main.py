@@ -74,6 +74,7 @@ if __name__ == "__main__":
         thread_num=thread_num,
         jl_main=jl_main,
         dim=dim,
+        result_dir_path=f"results/{target_name}",
         cells=cells,
     )
     qds.run()

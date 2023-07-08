@@ -73,6 +73,7 @@ if __name__ == "__main__":
                 jl_main=jl_main,
                 dim=dim,
                 cells=cells,
+                result_dir_path=f"results/hyperparams-search/{target_name}/cells{cells}/dim{dim}",
             )
             print(f"start {qds.result_dir_path}")
             qds.run()
