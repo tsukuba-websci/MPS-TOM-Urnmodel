@@ -23,7 +23,6 @@ def copy_best_results(targets, source_dir, destination_dir, overwrite=False):
                 dim_dir = os.path.join(cells_dir, dim)
                 file_path = os.path.join(dim_dir, "best.csv")
 
-                # best.csvを読み込む
                 df = pd.read_csv(file_path)
                 distance = df["distance"].iloc[0]
 
@@ -32,6 +31,7 @@ def copy_best_results(targets, source_dir, destination_dir, overwrite=False):
                     best_distance = distance
 
         if best_dir:
+            print(f"best_dir: {best_dir}")
             destination_target_dir = os.path.join(destination_dir, target)
             os.makedirs(destination_target_dir, exist_ok=True)
             if overwrite:
@@ -41,7 +41,6 @@ def copy_best_results(targets, source_dir, destination_dir, overwrite=False):
 
 
 if __name__ == "__main__":
-    # コマンドライン引数のパース
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", action="store_true", help="Overwrite destination directory")
     args = parser.parse_args()
