@@ -41,6 +41,14 @@ def set_target_data(target_type: str, target: str) -> pd.DataFrame:
     return target_data
 
 
+def read_results(target_type: str, index: list) -> pd.DataFrame:
+    rs_results = pd.read_csv(f"results/random_search.csv").set_index(index)
+
+    if target_type == "synthetic":
+        rs_results = rs_results.head(100)
+    return rs_results
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     args = parse_args(parser)
@@ -54,7 +62,7 @@ if __name__ == "__main__":
     for target in targets:
         target_data = set_target_data(target_type, target)
 
-        rs_results = pd.read_csv(f"results/random_search.csv").set_index(index)
+        rs_results = read_results(target_type, index)
 
         # find best params
         rs_best_params = (rs_results - target_data).abs().sum(axis=1).idxmin()
