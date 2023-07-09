@@ -43,7 +43,13 @@ def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
             ga_df["target"] = target_labels[target]
             ga_df["model"] = "GA"
 
-            df = pd.concat([df, fs_df, qd_df, ga_df], ignore_index=True)
+            rs_best_vecs = pd.read_csv(f"results/fitted/{target}/random-search.csv")
+            rs_best_diffs = (rs_best_vecs - emp).abs().sum(axis=1)
+            rs_df = pd.DataFrame(data=rs_best_diffs, columns=["distance"])
+            rs_df["target"] = target_labels[target]
+            rs_df["model"] = "Random Search"
+
+            df = pd.concat([df, fs_df, qd_df, ga_df, rs_df], ignore_index=True)
 
         g: sns.axisgrid.FacetGrid = sns.catplot(
             height=4,
@@ -56,7 +62,12 @@ def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
             capsize=0.02,
             errwidth=1.5,
             hue="model",
-            palette={"Existing": my_color["red"], "Proposed": my_color["light_green"], "GA": my_color["light_blue"]},
+            palette={
+                "Existing": my_color["red"],
+                "Proposed": my_color["light_green"],
+                "GA": my_color["light_blue"],
+                "Random Search": my_color["purple"],
+            },
             legend=False,  # type: ignore
         )
         plt.ylabel("d")

@@ -41,7 +41,7 @@ if __name__ == "__main__":
     my_color = {
         "red": "#FC8484",
         "dark_red": "#FA5050",
-        "light_blue": "#9CC3DA",
+        "light_blue": "#94C4E0",
         "light_green": "#9CDAA0",
         "dark_blue": "#76ABCB",
         "dark_green": "#51BD56",
@@ -49,6 +49,7 @@ if __name__ == "__main__":
         "orange": "#ff7f0e",
         "blue": "#1f77b4",
         "green": "#2ca02c",
+        "purple": "#CBA6DD",
     }
 
     if graph_type == "bar":
