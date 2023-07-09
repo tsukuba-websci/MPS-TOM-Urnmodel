@@ -1,8 +1,11 @@
+import csv
+import os
 from typing import Any, List, Tuple
 
 import numpy as np
 
 from lib.history2vec import History2Vec, History2VecResult
+from lib.julia_initializer import JuliaInitializer
 from lib.run_model import Params, run_model
 
 
@@ -14,15 +17,10 @@ class RandomSearch:
         num_generations: int,
         jl_main: Any,
         thread_num: int,
-        target: History2VecResult = None,
     ) -> None:
-        self.target = target
         self.num_generations = num_generations
         self.jl_main = jl_main
         self.thread_num = thread_num
-        self.best_solution = (-1, -1, -1, -1)
-        self.best_objective = float("inf")
-        self.archive = []
 
     def tovec(self, history: List[Tuple[int, int]], interval_num: int) -> History2VecResult:
         """相互やり取りの履歴を10個の指標に変換する．
@@ -33,17 +31,6 @@ class RandomSearch:
             History2VecResult: 履歴ベクトル
         """
         return History2Vec(self.jl_main, self.thread_num).history2vec(history, interval_num)
-
-    def objective_function(self, history: list) -> float:
-        """目的関数．ターゲットとの差の絶対値の和を返す．
-
-        Args:
-            history (list): 履歴ベクトル
-
-        Returns:
-            float: 目的関数の値
-        """
-        return np.sum(np.abs(np.array(history) - np.array(self.target)))
 
     def make_new_solution(self) -> tuple:
         """新しい解をランダムに生成する．
@@ -81,17 +68,7 @@ class RandomSearch:
             return False
         return True
 
-    def search(self) -> None:
-        """ランダムサーチによる遺伝子探索を行う．
-
-        具体的には一定回数以下の手順を行うことで探索を行う．
-
-        1. 新しい解を生成する．
-        2. 満たしている場合は目的関数を計算する．（ただし目的関数は，`ターゲットデータを表す10個の指標` と `解を表す10個の指標` の差の絶対値の和を計算する）
-        3. 目的関数の値が最小値を更新している場合は最小値を更新する．
-        4. 1 に戻る．
-        """
-
+    def run(self) -> None:
         for _ in range(self.num_generations):
             solution = self.make_new_solution()
             histries = run_model(
@@ -103,8 +80,12 @@ class RandomSearch:
                     steps=20000,
                 )
             )
-            objective = self.objective_function(self.tovec(histries, 1000))
-            if objective < self.best_objective:
-                self.best_solution = solution
-                self.best_objective = objective
-            self.archive.append((solution, objective))
+            vec = self.tovec(histries, 1000)
+
+
+if __name__ == "__main__":
+    iterations = 500
+
+    jl_main, thread_num = JuliaInitializer().initialize()
+    rs = RandomSearch(iterations, jl_main, thread_num)
+    rs.run()
