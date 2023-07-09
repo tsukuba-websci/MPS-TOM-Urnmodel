@@ -26,7 +26,8 @@ if __name__ == "__main__":
             f"{data}/rho20_nu7_sWSW",
         ]
 
-    algorithms = ["ga", "qd"]
+    algorithms = ["ga", "qd", "random-search"]
+
     jl_main, thread_num = JuliaInitializer().initialize()
     history2vec_ = History2Vec(jl_main, thread_num)
     for target in targets:
