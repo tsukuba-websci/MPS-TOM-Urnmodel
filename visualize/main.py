@@ -1,7 +1,6 @@
 import argparse
 
 import matplotlib
-import pandas as pd
 from matplotlib import pyplot as plt
 
 from visualize.graphs.bar_graph import plot_bar_graph
@@ -34,8 +33,6 @@ if __name__ == "__main__":
             f"{target_type}/rho20_nu7_sSSW",
             f"{target_type}/rho20_nu7_sWSW",
         ]
-        synthetic = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
-        synthetic_mean = synthetic.groupby(["rho", "nu", "s"]).mean()
 
     fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
     fm.addfont("./STIXTwoText.ttf")
