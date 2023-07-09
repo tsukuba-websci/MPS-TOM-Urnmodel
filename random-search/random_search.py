@@ -3,6 +3,7 @@ import os
 from typing import Any, List, Tuple
 
 import numpy as np
+from tqdm import tqdm
 
 from lib.history2vec import History2Vec, History2VecResult
 from lib.julia_initializer import JuliaInitializer
@@ -91,7 +92,7 @@ class RandomSearch:
         2. rho,nu,r,fと10個の指標をoutput_fileに保存する
         """
 
-        for _ in range(self.num_generations):
+        for _ in tqdm(range(self.num_generations)):
             solution = self.make_new_solution()
             histries = run_model(
                 Params(
