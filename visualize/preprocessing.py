@@ -16,6 +16,7 @@ if __name__ == "__main__":
 
     if data == "empirical":
         targets = ["aps", "twitter"]
+        # targets = ["aps", "twitter", "mixi"]
     elif data == "synthetic":
         targets = [
             f"{data}/rho5_nu5_sSSW",
@@ -26,7 +27,8 @@ if __name__ == "__main__":
             f"{data}/rho20_nu7_sWSW",
         ]
 
-    algorithms = ["ga", "qd"]
+    algorithms = ["ga", "qd", "random-search"]
+
     jl_main, thread_num = JuliaInitializer().initialize()
     history2vec_ = History2Vec(jl_main, thread_num)
     for target in targets:

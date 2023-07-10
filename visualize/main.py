@@ -1,7 +1,6 @@
 import argparse
 
 import matplotlib
-import pandas as pd
 from matplotlib import pyplot as plt
 
 from visualize.graphs.bar_graph import plot_bar_graph
@@ -25,6 +24,7 @@ if __name__ == "__main__":
 
     if target_type == "empirical":
         targets = ["aps", "twitter"]
+        # targets = ["aps", "twitter", "mixi"]
     else:
         targets = [
             f"{target_type}/rho5_nu5_sSSW",
@@ -34,8 +34,6 @@ if __name__ == "__main__":
             f"{target_type}/rho20_nu7_sSSW",
             f"{target_type}/rho20_nu7_sWSW",
         ]
-        synthetic = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
-        synthetic_mean = synthetic.groupby(["rho", "nu", "s"]).mean()
 
     fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
     fm.addfont("./STIXTwoText.ttf")
@@ -44,7 +42,7 @@ if __name__ == "__main__":
     my_color = {
         "red": "#FC8484",
         "dark_red": "#FA5050",
-        "light_blue": "#9CC3DA",
+        "light_blue": "#94C4E0",
         "light_green": "#9CDAA0",
         "dark_blue": "#76ABCB",
         "dark_green": "#51BD56",
@@ -52,6 +50,7 @@ if __name__ == "__main__":
         "orange": "#ff7f0e",
         "blue": "#1f77b4",
         "green": "#2ca02c",
+        "purple": "#CBA6DD",
     }
 
     if graph_type == "bar":
