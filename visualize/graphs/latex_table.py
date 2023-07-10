@@ -1,3 +1,6 @@
+import argparse
+import os
+
 import matplotlib
 import numpy as np
 import pandas as pd
@@ -8,7 +11,7 @@ from matplotlib.colors import LinearSegmentedColormap
 # pandas>=1.5.3, Jinja2>=3.0.0, matplotlib, numpyのある環境で実行してください。
 
 
-def export_latex_table(targets: list, my_color: dict) -> None:
+def export_latex_table(target_type: str, targets: list, my_color: dict) -> None:
     my_red_cmap = LinearSegmentedColormap.from_list("my_red_gradient", colors=["white", my_color["red"]])
     my_green_cmap = LinearSegmentedColormap.from_list("my_green_gradient", ["white", my_color["light_green"]])
 
@@ -60,7 +63,7 @@ def export_latex_table(targets: list, my_color: dict) -> None:
             )
         )
         table = [
-            r"\begin{minipage}[t]{0.3\textwidth}",
+            rf"\begin{{minipage}}[t]{{{1 / len(targets)}\textwidth}}",
             rf"\caption{{best {n} genes for {target}}}",
             rf"\label{{table:best_genes_for_{target}}}",
             l.removesuffix("\n"),
@@ -70,12 +73,23 @@ def export_latex_table(targets: list, my_color: dict) -> None:
 
     contents += "\\end{table*}"
 
-    with open("./results/table.tex", "w") as f:
+    os.makedirs("./results/table", exist_ok=True)
+    with open(f"./results/table/{target_type}.tex", "w") as f:
         f.write(contents)
 
 
 if __name__ == "__main__":
-    targets = ["aps", "twitter"]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("target_type", type=str, choices=["empirical", "synthetic"], help="データの種類")
+    args = parser.parse_args()
+    target_type = args.target_type
+
+    if target_type == "empirical":
+        targets = ["twitter", "aps"]
+        # targets = ["twitter", "aps", "mixi"]
+    elif target_type == "synthetic":
+        # FIXME: 最良のときのターゲットを指定して下さい
+        targerts = ["synthetic/rho5_nu5_sSSW"]
 
     fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
     fm.addfont("./STIXTwoText.ttf")
@@ -94,4 +108,4 @@ if __name__ == "__main__":
         "green": "#2ca02c",
     }
 
-    export_latex_table(targets, my_color)
+    export_latex_table(target_type, targets, my_color)
