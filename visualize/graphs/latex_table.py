@@ -85,7 +85,8 @@ if __name__ == "__main__":
     target_type = args.target_type
 
     if target_type == "empirical":
-        targets = ["aps", "twitter"]
+        targets = ["twitter", "aps"]
+        # targets = ["twitter", "aps", "mixi"]
     elif target_type == "synthetic":
         # FIXME: 最良のときのターゲットを指定して下さい
         targerts = ["synthetic/rho5_nu5_sSSW"]
