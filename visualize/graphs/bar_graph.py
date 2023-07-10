@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 target_labels = {
     "twitter": "TMN",
     "aps": "APS",
+    "mixi": "MIXI",
 }
 
 

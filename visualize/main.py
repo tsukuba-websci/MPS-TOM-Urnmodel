@@ -24,6 +24,7 @@ if __name__ == "__main__":
 
     if target_type == "empirical":
         targets = ["aps", "twitter"]
+        # targets = ["aps", "twitter", "mixi"]
     else:
         targets = [
             f"{target_type}/rho5_nu5_sSSW",

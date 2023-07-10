@@ -16,6 +16,7 @@ if __name__ == "__main__":
 
     if data == "empirical":
         targets = ["aps", "twitter"]
+        # targets = ["aps", "twitter", "mixi"]
     elif data == "synthetic":
         targets = [
             f"{data}/rho5_nu5_sSSW",
