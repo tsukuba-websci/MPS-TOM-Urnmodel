@@ -11,7 +11,7 @@ from matplotlib.colors import LinearSegmentedColormap
 # pandas>=1.5.3, Jinja2>=3.0.0, matplotlib, numpyのある環境で実行してください。
 
 
-def export_latex_table(target_type: str, targets: list, my_color: dict) -> None:
+def export_latex_table(target_type: str, targets: list, generation: int, my_color: dict) -> None:
     my_red_cmap = LinearSegmentedColormap.from_list("my_red_gradient", colors=["white", my_color["red"]])
     my_green_cmap = LinearSegmentedColormap.from_list("my_green_gradient", ["white", my_color["light_green"]])
 
@@ -19,7 +19,8 @@ def export_latex_table(target_type: str, targets: list, my_color: dict) -> None:
 
     n = 5
     for target in targets:
-        path = f"../qd/results/{target}/archives/00000499.csv"
+        filenum_str = "{:0>8}".format(generation - 1)
+        path = f"../qd/results/{target}/archives/{filenum_str}.csv"
         _df = pd.read_csv(path)
 
         _df.index = pd.Index(np.arange(len(_df)) + 1)
@@ -87,9 +88,11 @@ if __name__ == "__main__":
     if target_type == "empirical":
         targets = ["twitter", "aps"]
         # targets = ["twitter", "aps", "mixi"]
+        generation = 500
     elif target_type == "synthetic":
         # FIXME: 最良のときのターゲットを指定して下さい
-        targerts = ["synthetic/rho5_nu5_sSSW"]
+        targets = ["synthetic/rho5_nu15_sSSW"]
+        generation = 100
 
     fm: matplotlib.font_manager.FontManager = matplotlib.font_manager.fontManager
     fm.addfont("./STIXTwoText.ttf")
@@ -97,15 +100,7 @@ if __name__ == "__main__":
 
     my_color = {
         "red": "#FC8484",
-        "dark_red": "#FA5050",
-        "light_blue": "#9CC3DA",
         "light_green": "#9CDAA0",
-        "dark_blue": "#76ABCB",
-        "dark_green": "#51BD56",
-        "black": "#505050",
-        "orange": "#ff7f0e",
-        "blue": "#1f77b4",
-        "green": "#2ca02c",
     }
 
-    export_latex_table(target_type, targets, my_color)
+    export_latex_table(target_type, targets, generation, my_color)
