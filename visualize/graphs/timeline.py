@@ -22,7 +22,7 @@ def archives2df(df: pd.DataFrame, df_min: pd.DataFrame, target: str, algorithm: 
     return df, df_min
 
 
-def plot(df: pd.DataFrame, df_min: pd.DataFrame, color_order: list):
+def plot(df: pd.DataFrame, df_min: pd.DataFrame):
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.lineplot(
         data=df_min,
@@ -32,7 +32,6 @@ def plot(df: pd.DataFrame, df_min: pd.DataFrame, color_order: list):
         legend=False,
         linestyle="--",
         ax=ax,
-        palette=color_order,
     )
     sns.lineplot(
         data=df,
@@ -42,7 +41,6 @@ def plot(df: pd.DataFrame, df_min: pd.DataFrame, color_order: list):
         legend=False,
         ax=ax,
         alpha=0.3,
-        palette=color_order,
     )
 
 
@@ -52,8 +50,6 @@ def plot_timeline(target_type: str, targets: list, my_color: dict) -> None:
     for algorithm in algorithms:
         # 実データに対しては、全てのターゲットをまとめてプロット
         if target_type == "empirical":
-            color_order = [my_color["orange"], my_color["blue"]]
-            # color_order = [my_color["orange"], my_color["blue"], my_color["green"]]
 
             os.makedirs(f"results/timeline/{algorithm}", exist_ok=True)
 
@@ -61,7 +57,7 @@ def plot_timeline(target_type: str, targets: list, my_color: dict) -> None:
             df_min = pd.DataFrame()
             for target in targets:
                 df, df_min = archives2df(df, df_min, target, algorithm)
-            plot(df, df_min, color_order)
+            plot(df, df_min)
 
             plt.xlabel("Generation")
             plt.ylabel("d")

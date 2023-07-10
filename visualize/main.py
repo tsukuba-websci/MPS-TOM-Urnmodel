@@ -23,8 +23,8 @@ if __name__ == "__main__":
     target_type = args.target_type
 
     if target_type == "empirical":
-        targets = ["twitter", "aps"]
-        # targets = ["twitter","aps", "mixi"]
+        # targets = ["twitter", "aps"]
+        targets = ["twitter","aps", "mixi"]
     else:
         targets = [
             f"{target_type}/rho5_nu5_sSSW",
@@ -47,9 +47,6 @@ if __name__ == "__main__":
         "dark_blue": "#76ABCB",
         "dark_green": "#51BD56",
         "black": "#505050",
-        "orange": "#ff7f0e",
-        "blue": "#1f77b4",
-        "green": "#2ca02c",
         "purple": "#CBA6DD",
     }
 
