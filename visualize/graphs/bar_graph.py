@@ -93,6 +93,9 @@ def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
             ga_best_vecs = pd.read_csv(f"results/fitted/{target}/ga.csv")
             ga_mean = (ga_best_vecs - target_mean).abs().sum(axis=1).mean()
 
+            rs_best_vecs = pd.read_csv(f"results/fitted/{target}/random-search.csv")
+            rs_mean = (rs_best_vecs - target_mean).abs().sum(axis=1).mean()
+
             row = pd.Series(
                 {
                     "rho": rho,
@@ -101,17 +104,18 @@ def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
                     "fs_mean": fs_mean,
                     "qd_mean": qd_mean,
                     "ga_mean": ga_mean,
+                    "rs_mean": rs_mean,
                 }
             )
             df = pd.concat([df, row.to_frame().T], ignore_index=True)
 
-        plt.rcParams["font.size"] = 16
+        plt.rcParams["font.size"] = 13
         fig, ax = plt.subplots(figsize=(6, 4))
         ax.bar(
-            x=["Full Search", "Quality Diversity", "GA"],
-            height=df[["fs_mean", "qd_mean", "ga_mean"]].mean(),
-            yerr=df[["fs_mean", "qd_mean", "ga_mean"]].std(),
-            color=[my_color["red"], my_color["light_green"], my_color["light_blue"]],
+            x=["Full Search", "Quality Diversity", "GA", "Random Search"],
+            height=df[["fs_mean", "qd_mean", "ga_mean", "rs_mean"]].mean(),
+            yerr=df[["fs_mean", "qd_mean", "ga_mean", "rs_mean"]].std(),
+            color=[my_color["red"], my_color["light_green"], my_color["light_blue"], my_color["purple"]],
             capsize=4,
         )
         plt.ylabel("d")
