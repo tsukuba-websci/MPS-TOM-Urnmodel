@@ -71,12 +71,12 @@ def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
         plt.close()
 
     else:
-        df = pd.DataFrame()
-
         targets_data = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
         targets_mean = targets_data.groupby(["rho", "nu", "s"]).mean()
 
         pattern = r"synthetic/rho(\d+)_nu(\d+)_s(SSW|WSW)"
+
+        results = []
 
         for target in targets:
             matches = re.match(pattern, target)
@@ -84,30 +84,31 @@ def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
                 rho = int(matches.group(1))
                 nu = int(matches.group(2))
                 s = matches.group(3)
-            target_mean = targets_mean.loc[(rho, nu, s), :]
-            fs_mean = (fs_results_mean - target_mean).dropna(axis=1).abs().sum(axis=1).min()
+                target_mean = targets_mean.loc[(rho, nu, s), :]
+                fs_mean = (fs_results_mean - target_mean).dropna(axis=1).abs().sum(axis=1).min()
 
-            qd_best_vecs = pd.read_csv(f"results/fitted/{target}/qd.csv")
-            qd_mean = (qd_best_vecs - target_mean).abs().sum(axis=1).mean()
+                qd_best_vecs = pd.read_csv(f"results/fitted/{target}/qd.csv")
+                qd_mean = (qd_best_vecs - target_mean).abs().sum(axis=1).mean()
 
-            ga_best_vecs = pd.read_csv(f"results/fitted/{target}/ga.csv")
-            ga_mean = (ga_best_vecs - target_mean).abs().sum(axis=1).mean()
+                ga_best_vecs = pd.read_csv(f"results/fitted/{target}/ga.csv")
+                ga_mean = (ga_best_vecs - target_mean).abs().sum(axis=1).mean()
 
-            rs_best_vecs = pd.read_csv(f"results/fitted/{target}/random-search.csv")
-            rs_mean = (rs_best_vecs - target_mean).abs().sum(axis=1).mean()
+                rs_best_vecs = pd.read_csv(f"results/fitted/{target}/random-search.csv")
+                rs_mean = (rs_best_vecs - target_mean).abs().sum(axis=1).mean()
 
-            row = pd.Series(
-                {
-                    "rho": rho,
-                    "nu": nu,
-                    "s": s,
-                    "fs_mean": fs_mean,
-                    "qd_mean": qd_mean,
-                    "ga_mean": ga_mean,
-                    "rs_mean": rs_mean,
-                }
-            )
-            df = pd.concat([df, row.to_frame().T], ignore_index=True)
+                results.append(
+                    {
+                        "rho": rho,
+                        "nu": nu,
+                        "s": s,
+                        "fs_mean": fs_mean,
+                        "qd_mean": qd_mean,
+                        "ga_mean": ga_mean,
+                        "rs_mean": rs_mean,
+                    }
+                )
+
+        df = pd.DataFrame(results)
 
         plt.rcParams["font.size"] = 13
         fig, ax = plt.subplots(figsize=(6, 4))
