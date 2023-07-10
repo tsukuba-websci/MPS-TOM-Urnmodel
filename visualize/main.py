@@ -23,8 +23,8 @@ if __name__ == "__main__":
     target_type = args.target_type
 
     if target_type == "empirical":
-        targets = ["aps", "twitter"]
-        # targets = ["aps", "twitter", "mixi"]
+        targets = ["twitter", "aps"]
+        # targets = ["twitter","aps", "mixi"]
     else:
         targets = [
             f"{target_type}/rho5_nu5_sSSW",
