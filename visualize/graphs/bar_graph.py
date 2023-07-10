@@ -111,7 +111,7 @@ def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
 
         df = pd.DataFrame(results)
 
-        plt.rcParams["font.size"] = 13
+        plt.rcParams["font.size"] = 11
         fig, ax = plt.subplots(figsize=(6, 4))
         ax.bar(
             x=["Existing Method", "Quality Diversity", "GA", "Random Search"],
