@@ -59,6 +59,7 @@ def plot_box(target_type: str, targets: list, my_color: dict):
         hue="algorithm",
         data=combined_data,
         palette=palette,
+        fliersize=2,
     )
     os.makedirs("results/box", exist_ok=True)
     plt.legend().remove()
