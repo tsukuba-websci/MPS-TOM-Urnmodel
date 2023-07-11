@@ -75,21 +75,15 @@ if __name__ == "__main__":
 
         rs_results = read_results(target_type, index)
 
-        # find best params
+        # find params
         rs_results["distance"] = (rs_results - target_data).abs().sum(axis=1)
-        rs_best_params = rs_results["distance"].idxmin()
-        rs_best_distance = rs_results["distance"].min()
 
         # convert to pandas.DataFrame
         df = rs_results.reset_index()
         df["recentness"], df["frequency"] = zip(*df["s"].map(convert_s))
-        df_best = pd.DataFrame([rs_best_params], columns=index)
-        df_best["recentness"], df_best["frequency"] = zip(*df_best["s"].map(convert_s))
-        df_best["distance"] = rs_best_distance
 
         # save params and distance
         dir = f"results/{target}"
         os.makedirs(dir, exist_ok=True)
 
         df[out_index].to_csv(f"{dir}/archive.csv", index=False)
-        df_best[out_index].to_csv(f"{dir}/best.csv", index=False)
