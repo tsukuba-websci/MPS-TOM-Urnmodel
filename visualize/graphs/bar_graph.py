@@ -28,9 +28,9 @@ def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
             emp = pd.read_csv(f"../data/{target}.csv").iloc[0]
 
             algorithm_labels = [
-                {"algorithm": "full-search", "model": "Existing"},
+                {"algorithm": "full-search", "model": "Existing Method"},
                 {"algorithm": "qd", "model": "Proposed"},
-                {"algorithm": "ga", "model": "GA"},
+                {"algorithm": "ga", "model": "Genetic Algorithm"},
                 {"algorithm": "random-search", "model": "Random Search"},
             ]
 
@@ -114,7 +114,7 @@ def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
         plt.rcParams["font.size"] = 11
         fig, ax = plt.subplots(figsize=(6, 4))
         ax.bar(
-            x=["Existing Method", "Quality Diversity", "GA", "Random Search"],
+            x=["Existing Method", "Quality Diversity", "Genetic Algorithm", "Random Search"],
             height=df[["fs_mean", "qd_mean", "ga_mean", "rs_mean"]].mean(),
             yerr=df[["fs_mean", "qd_mean", "ga_mean", "rs_mean"]].std(),
             color=[my_color["red"], my_color["light_green"], my_color["light_blue"], my_color["purple"]],
