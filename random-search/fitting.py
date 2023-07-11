@@ -65,14 +65,18 @@ if __name__ == "__main__":
         rs_results = read_results(target_type, index)
 
         # find best params
-        rs_best_params = (rs_results - target_data).abs().sum(axis=1).idxmin()
-        rs_best_distance = (rs_results - target_data).abs().sum(axis=1).min()
+        rs_results["distance"] = (rs_results - target_data).abs().sum(axis=1)
+        rs_best_params = rs_results["distance"].idxmin()
+        rs_best_distance = rs_results["distance"].min()
 
         # convert to pandas.DataFrame
-        df = pd.DataFrame([rs_best_params], columns=index)
-        df["distance"] = rs_best_distance
+        df = rs_results.reset_index()
+        df_best = pd.DataFrame([rs_best_params], columns=index)
+        df_best["distance"] = rs_best_distance
 
-        # save best params
+        # save params and distance
         dir = f"results/{target}"
         os.makedirs(dir, exist_ok=True)
-        df.to_csv(f"{dir}/best.csv", index=False)
+
+        df[["rho", "nu", "recentness", "frequency", "distance"]].to_csv(f"{dir}/archive.csv", index=False)
+        df_best.to_csv(f"{dir}/best.csv", index=False)
