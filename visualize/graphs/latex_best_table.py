@@ -1,9 +1,7 @@
 import argparse
 import os
 
-import matplotlib
 import pandas as pd
-from matplotlib import pyplot as plt
 
 # NOTE: MPS-TOM-urnmodel/で用意されているpoetry環境ではpandasのversionの依存関係が合わず、動きません。
 # pandas>=1.5.3, Jinja2>=3.0.0, matplotlib, numpyのある環境で実行してください。
