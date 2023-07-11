@@ -66,6 +66,7 @@ def plot_box(target_type: str, targets: list, my_color: dict):
         plt.legend().remove()
         plt.ylabel("d")
         plt.xlabel("")
+        plt.tight_layout()
         plt.savefig(f"results/box/{target_type}.png", dpi=300)
 
     else:
@@ -99,4 +100,5 @@ def plot_box(target_type: str, targets: list, my_color: dict):
             os.makedirs(f"results/box/{target_type}", exist_ok=True)
             plt.ylabel("d")
             plt.xlabel("")
+            plt.tight_layout()
             plt.savefig(f"results/box/{target}.png", dpi=300)
