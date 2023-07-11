@@ -4,12 +4,13 @@ import matplotlib
 from matplotlib import pyplot as plt
 
 from visualize.graphs.bar_graph import plot_bar_graph
+from visualize.graphs.box import plot_box
 from visualize.graphs.radar_chart import plot_radar_chart
 from visualize.graphs.timeline import plot_timeline
 
 
 def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
-    parser.add_argument("graph_type", type=str, choices=["bar", "radar", "timeline"], help="グラフの種類")
+    parser.add_argument("graph_type", type=str, choices=["bar", "radar", "timeline", "box"], help="グラフの種類")
     parser.add_argument("target_type", type=str, choices=["empirical", "synthetic"], help="データの種類")
     args = parser.parse_args()
     return args
@@ -56,3 +57,5 @@ if __name__ == "__main__":
         plot_radar_chart(target_type, targets, my_color)
     elif graph_type == "timeline":
         plot_timeline(target_type, targets, my_color)
+    elif graph_type == "box":
+        plot_box(target_type, targets, my_color)
