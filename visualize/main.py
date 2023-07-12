@@ -7,10 +7,11 @@ from visualize.graphs.bar_graph import plot_bar_graph
 from visualize.graphs.box import plot_box
 from visualize.graphs.radar_chart import plot_radar_chart
 from visualize.graphs.timeline import plot_timeline
+from visualize.graphs.qd_map import plot_qd_map
 
 
 def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
-    parser.add_argument("graph_type", type=str, choices=["bar", "radar", "timeline", "box"], help="グラフの種類")
+    parser.add_argument("graph_type", type=str, choices=["bar", "radar", "timeline", "box", "qd_map"], help="グラフの種類")
     parser.add_argument("target_type", type=str, choices=["empirical", "synthetic"], help="データの種類")
     args = parser.parse_args()
     return args
@@ -49,6 +50,7 @@ if __name__ == "__main__":
         "dark_green": "#51BD56",
         "black": "#505050",
         "purple": "#CBA6DD",
+        "yellow": "#FFE959",
     }
 
     if graph_type == "bar":
@@ -59,3 +61,5 @@ if __name__ == "__main__":
         plot_timeline(target_type, targets, my_color)
     elif graph_type == "box":
         plot_box(target_type, targets, my_color)
+    elif graph_type == "qd_map":
+        plot_qd_map(target_type, targets, my_color)

@@ -8,7 +8,11 @@ from ribs.archives import CVTArchive
 from sklearn.manifold import TSNE
 
 
-def plot_map(targets: list, my_color: dict) -> None:
+def plot_qd_map(target_type: str, targets: list, my_color: dict) -> None:
+    if target_type != "empirical":
+        print("plot_qd_map only supports empirical data.")
+        return
+
     my_green_to_red_cmap = LinearSegmentedColormap.from_list(
         "my_green_to_red_gradient", [my_color["dark_red"], my_color["yellow"], my_color["dark_green"]]
     )
@@ -31,41 +35,27 @@ def plot_map(targets: list, my_color: dict) -> None:
         reduced_data = tsne.fit_transform(normalized_data)
 
         # reduced_dataをDataFrameに変換
-        reduced_data_df = pd.DataFrame(reduced_data, columns=["Dimension 1", "Dimension 2"])
+        reduced_data_df = pd.DataFrame(reduced_data, columns=["t-sne1", "t-sne2"])
 
         # "distance"列を追加
         reduced_data_df["distance"] = df["objective"].abs()
 
         # 可視化
         os.makedirs("results/qd_map", exist_ok=True)
-        plt.figure(figsize=(10, 10))
+        plt.rcParams["font.size"] = 22
+        plt.figure(figsize=(12, 10))
         scatter = plt.scatter(
-            reduced_data_df["Dimension 1"],
-            reduced_data_df["Dimension 2"],
+            reduced_data_df["t-sne1"],
+            reduced_data_df["t-sne2"],
             c=reduced_data_df["distance"],
             cmap=my_green_to_red_cmap,
         )
-        cbar = plt.colorbar(scatter, label="Distance", orientation="vertical")
+        cbar = plt.colorbar(scatter, label="d", orientation="vertical", shrink=1)
         cbar.ax.invert_yaxis()
-        plt.xlabel("dimension 1")
-        plt.ylabel("dimension 2")
-        plt.savefig(f"results/qd_map/{target}.png")
-
-
-if __name__ == "__main__":
-    targets = ["twitter", "aps"]
-    # targets = ["twitter", "aps", "mixi"]
-
-    my_color = {
-        "red": "#FC8484",
-        "dark_red": "#FA5050",
-        "light_blue": "#94C4E0",
-        "light_green": "#9CDAA0",
-        "dark_blue": "#76ABCB",
-        "dark_green": "#51BD56",
-        "black": "#505050",
-        "purple": "#CBA6DD",
-        "yellow": "#FFE959",
-    }
-
-    plot_map(targets, my_color)
+        cbar.ax.tick_params(labelsize=16)
+        plt.xlabel("t-SNE 1")
+        plt.ylabel("t-SNE 2")
+        plt.tick_params(axis="both", labelsize=18)
+        plt.tight_layout()
+        plt.savefig(f"results/qd_map/{target}.png", dpi=300)
+        plt.close()
