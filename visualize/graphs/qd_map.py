@@ -12,14 +12,15 @@ def plot(reduced_data_df: pd.DataFrame, cmap: LinearSegmentedColormap, file: str
     dir = os.path.dirname(file)
     os.makedirs(dir, exist_ok=True)
 
-    plt.rcParams["font.size"] = 30
     plt.figure(figsize=(10, 8))
+    s = (reduced_data_df["distance"].max() - reduced_data_df["distance"] + 0.01) * 100
     scatter = plt.scatter(
         reduced_data_df["t-sne1"],
         reduced_data_df["t-sne2"],
         c=reduced_data_df["distance"],
         cmap=cmap,
-        s=15,
+        s=s,
+        alpha=0.5,
     )
     cbar = plt.colorbar(scatter, label="d", orientation="vertical", shrink=1)
     cbar.ax.invert_yaxis()
