@@ -8,8 +8,10 @@ from ribs.archives import CVTArchive
 from sklearn.manifold import TSNE
 
 
-def plot(reduced_data_df: pd.DataFrame, cmap: LinearSegmentedColormap, dir: str, target: str) -> None:
+def plot(reduced_data_df: pd.DataFrame, cmap: LinearSegmentedColormap, file: str) -> None:
+    dir = os.path.dirname(file)
     os.makedirs(dir, exist_ok=True)
+
     plt.rcParams["font.size"] = 30
     plt.figure(figsize=(10, 8))
     scatter = plt.scatter(
@@ -26,7 +28,7 @@ def plot(reduced_data_df: pd.DataFrame, cmap: LinearSegmentedColormap, dir: str,
     plt.ylabel("t-SNE 2")
     plt.tick_params(axis="both", labelsize=22)
     plt.tight_layout()
-    plt.savefig(f"{dir}/{target}.png", dpi=200)
+    plt.savefig(file, dpi=200)
     plt.close()
 
 
@@ -57,7 +59,8 @@ def phenotype_map(df: pd.DataFrame, target: str, cmap: LinearSegmentedColormap) 
     reduced_data_df["distance"] = df["objective"].abs()
 
     # 可視化
-    plot(reduced_data_df, cmap, "results/qd_map/phenotype", target)
+    file = f"results/qd_map/phenotype/{target}.png"
+    plot(reduced_data_df, cmap, file)
 
 
 def genotype_map(df: pd.DataFrame, target: str, cmap: LinearSegmentedColormap) -> None:
@@ -75,14 +78,11 @@ def genotype_map(df: pd.DataFrame, target: str, cmap: LinearSegmentedColormap) -
     reduced_data_df["distance"] = df["objective"].abs()
 
     # 可視化
-    plot(reduced_data_df, cmap, "results/qd_map/genotype", target)
+    file = f"results/qd_map/genotype/{target}.png"
+    plot(reduced_data_df, cmap, file)
 
 
 def plot_qd_map(target_type: str, targets: list, my_color: dict) -> None:
-    if target_type != "empirical":
-        print("plot_qd_map only supports empirical data.")
-        return
-
     my_green_to_red_cmap = LinearSegmentedColormap.from_list(
         "my_green_to_red_gradient", [my_color["dark_red"], my_color["yellow"], my_color["dark_green"]]
     )
