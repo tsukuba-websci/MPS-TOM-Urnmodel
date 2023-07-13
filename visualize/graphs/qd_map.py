@@ -3,6 +3,7 @@ import pickle
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib import _mathtext as mathtext
 from matplotlib.colors import LinearSegmentedColormap
 from ribs.archives import CVTArchive
 from sklearn.manifold import TSNE
@@ -25,8 +26,8 @@ def plot(reduced_data_df: pd.DataFrame, cmap: LinearSegmentedColormap, file: str
     cbar = plt.colorbar(scatter, label="d", orientation="vertical", shrink=1)
     cbar.ax.invert_yaxis()
     cbar.ax.tick_params(labelsize=22)
-    plt.xlabel("t-SNE 1")
-    plt.ylabel("t-SNE 2")
+    plt.xlabel("$t-SNE_1$")
+    plt.ylabel("$t-SNE_2$")
     plt.tick_params(axis="both", labelsize=22)
     plt.tight_layout()
     plt.savefig(file, dpi=200)
@@ -83,7 +84,20 @@ def genotype_map(df: pd.DataFrame, target: str, cmap: LinearSegmentedColormap) -
     plot(reduced_data_df, cmap, file)
 
 
-def plot_qd_map(target_type: str, targets: list, my_color: dict) -> None:
+def plot_qd_map(targets: list, my_color: dict) -> None:
+    # 下付き文字の設定
+    mathtext.FontConstantsBase = mathtext.ComputerModernFontConstants
+    mathtext.FontConstantsBase.sub1 = 0.1
+
+    plt.rcParams.update(
+        {
+            "mathtext.default": "default",
+            "mathtext.fontset": "stix",
+            "font.family": "Times New Roman",
+            "font.size": 30,
+            "figure.figsize": (3, 3),
+        }
+    )
     my_green_to_red_cmap = LinearSegmentedColormap.from_list(
         "my_green_to_red_gradient", [my_color["dark_red"], my_color["yellow"], my_color["dark_green"]]
     )
