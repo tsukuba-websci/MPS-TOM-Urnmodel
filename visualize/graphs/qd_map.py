@@ -4,7 +4,6 @@ import pickle
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib import _mathtext as mathtext
-from matplotlib import colors
 from matplotlib.colors import LinearSegmentedColormap
 from ribs.archives import CVTArchive
 from sklearn.manifold import TSNE
@@ -15,10 +14,10 @@ def plot(reduced_data_df: pd.DataFrame, cmap: LinearSegmentedColormap, file: str
     os.makedirs(dir, exist_ok=True)
 
     plt.figure(figsize=(10, 8))
-    if xlim is not None:
-        s = (reduced_data_df["distance"].max() - reduced_data_df["distance"] + 0.1) * 50
-    else:
-        s = (reduced_data_df["distance"].max() - reduced_data_df["distance"] + 0.01) * 100
+    min_value = reduced_data_df["distance"].min()
+    max_value = reduced_data_df["distance"].max()
+    s = (reduced_data_df["distance"] - min_value) * (100 - 15) / (max_value - min_value) + 15
+    s = 115 - s
     scatter = plt.scatter(
         reduced_data_df["t-sne1"],
         reduced_data_df["t-sne2"],
@@ -103,7 +102,6 @@ def plot_qd_map(targets: list, my_color: dict) -> None:
         {
             "mathtext.default": "default",
             "mathtext.fontset": "stix",
-            "font.family": "Times New Roman",
             "font.size": 30,
             "figure.figsize": (3, 3),
         }
