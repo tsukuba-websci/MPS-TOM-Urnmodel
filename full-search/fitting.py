@@ -44,8 +44,6 @@ def set_target_data(target_type: str, target: str) -> pd.DataFrame:
 def read_results(target_type: str, index: list) -> pd.DataFrame:
     rs_results = pd.read_csv("results/existing_full_search.csv").set_index(index)
 
-    if target_type == "synthetic":
-        rs_results = rs_results.head(100)
     return rs_results
 
 
