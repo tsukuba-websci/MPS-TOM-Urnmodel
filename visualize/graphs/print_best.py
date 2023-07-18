@@ -1,15 +1,28 @@
 import argparse
+import re
+
 import pandas as pd
 
 
-def export_latex_table(targets: list) -> None:
+def print_best(targets: list) -> None:
     algorithms = ["full-search", "qd", "ga", "random-search"]
 
     target_data = {}
     distances = {}
 
-    for target in targets:
-        target_data[target] = pd.read_csv(f"../data/{target}.csv").iloc[0]
+    if target_type == "empirical":
+        for target in targets:
+            target_data[target] = pd.read_csv(f"../data/{target}.csv").iloc[0]
+    else:
+        for target in targets:
+            pattern = r"synthetic/rho(\d+)_nu(\d+)_s(\w+)"
+            matches = re.match(pattern, target)
+            if matches:
+                rho = int(matches.group(1))
+                nu = int(matches.group(2))
+                s = matches.group(3)
+            synthetic = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
+            target_data[target] = synthetic.loc[(rho, nu, s), :].mean()
 
     for target in targets:
         distances[target] = {}
@@ -58,7 +71,13 @@ if __name__ == "__main__":
         # targets = ["twitter", "aps"]
         targets = ["mixi", "aps", "twitter"]
     elif target_type == "synthetic":
-        # FIXME: 最良のときのターゲットを指定して下さい
-        targets = ["synthetic/rho5_nu15_sSSW"]
+        targets = [
+            "synthetic/rho5_nu5_sSSW",
+            "synthetic/rho5_nu5_sWSW",
+            "synthetic/rho5_nu15_sSSW",
+            "synthetic/rho5_nu15_sWSW",
+            "synthetic/rho20_nu7_sSSW",
+            "synthetic/rho20_nu7_sWSW",
+        ]
 
-    export_latex_table(targets)
+    print_best(targets)
