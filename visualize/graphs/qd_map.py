@@ -98,14 +98,6 @@ def plot_qd_map(targets: list, my_color: dict) -> None:
     mathtext.FontConstantsBase = mathtext.ComputerModernFontConstants
     mathtext.FontConstantsBase.sub1 = 0.1
 
-    plt.rcParams.update(
-        {
-            "mathtext.default": "default",
-            "mathtext.fontset": "stix",
-            "font.size": 30,
-            "figure.figsize": (3, 3),
-        }
-    )
     my_green_to_red_cmap = LinearSegmentedColormap.from_list(
         "my_green_to_red_gradient",
         [my_color["dark_red"], my_color["yellow"], my_color["yellow_green"], my_color["dark_green"]],
