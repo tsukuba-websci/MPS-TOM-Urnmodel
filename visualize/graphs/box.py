@@ -88,7 +88,7 @@ def plot_box(target_type: str, targets: list, my_color: dict):
             combined_data = pd.concat(data_list)
 
             plt.figure(figsize=(8, 5))
-            plt.rcParams["font.size"] = 13
+            plt.rcParams["font.size"] = 15
             sns.boxplot(
                 x="algorithm",
                 y="distance",
@@ -98,6 +98,7 @@ def plot_box(target_type: str, targets: list, my_color: dict):
                 width=0.5,
             )
             os.makedirs(f"results/box/{target_type}", exist_ok=True)
+            plt.tick_params(axis="both")
             plt.ylabel("d")
             plt.xlabel("")
             plt.tight_layout()
