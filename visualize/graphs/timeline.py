@@ -83,30 +83,31 @@ def plot_timeline(target_type: str, targets: list, my_color: dict) -> None:
                 data[algorithm] = data_alg
                 data_min[algorithm] = data_alg_min
 
-            fig, ax = plt.subplots(figsize=(8, 5))
-            sns.lineplot(
-                data=data[algorithm],
-                x="generation",
-                y="distance",
-                hue="target",
-                legend=False,
-                ax=ax,
-                alpha=0.3,
-                palette=[my_color["dark_red"]],
-            )
-            sns.lineplot(
-                data=data_min[algorithm],
-                x="generation",
-                y="distance",
-                hue="target",
-                legend=False,
-                ax=ax,
-                linestyle="--",
-                palette=[my_color["dark_red"]],
-            )
-            plt.xlabel("Generation", fontsize=24)
-            plt.ylabel("d", fontsize=24)
-            plt.ylim(0, ymax)
-            plt.tight_layout()
-            plt.savefig(f"results/timeline/{algorithm}/{target_type}.png", dpi=300)
-            plt.close()
+            for algorithm in algorithms:
+                fig, ax = plt.subplots(figsize=(8, 5))
+                sns.lineplot(
+                    data=data[algorithm],
+                    x="generation",
+                    y="distance",
+                    hue="target",
+                    legend=False,
+                    ax=ax,
+                    alpha=0.3,
+                    palette=[my_color["dark_red"]],
+                )
+                sns.lineplot(
+                    data=data_min[algorithm],
+                    x="generation",
+                    y="distance",
+                    hue="target",
+                    legend=False,
+                    ax=ax,
+                    linestyle="--",
+                    palette=[my_color["dark_red"]],
+                )
+                plt.xlabel("Generation", fontsize=24)
+                plt.ylabel("d", fontsize=24)
+                plt.ylim(0, ymax)
+                plt.tight_layout()
+                plt.savefig(f"results/timeline/{algorithm}/{target}.png", dpi=300)
+                plt.close()
