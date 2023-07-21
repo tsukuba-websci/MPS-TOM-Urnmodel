@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 
 from visualize.graphs.bar_graph import plot_bar_graph
 from visualize.graphs.box import plot_box
-from visualize.graphs.qd_map import plot_qd_map
+from visualize.graphs.map import genotype_map, phenotype_map
 from visualize.graphs.radar_chart import plot_radar_chart
 from visualize.graphs.timeline import plot_timeline
 
@@ -63,4 +63,4 @@ if __name__ == "__main__":
     elif graph_type == "box":
         plot_box(target_type, targets, my_color)
     elif graph_type == "qd_map":
-        plot_qd_map(targets, my_color)
+        phenotype_map(target_type, targets, my_color)
