@@ -74,36 +74,6 @@ def read_data(target_type: str, targets: list, type: str):
     return df
 
 
-def genotype_map(target_type: str, targets: list, my_color: dict) -> None:
-    my_green_to_red_cmap = LinearSegmentedColormap.from_list(
-        "my_green_to_red_gradient",
-        [my_color["dark_red"], my_color["yellow"], my_color["yellow_green"], my_color["dark_green"]],
-    )
-
-    df = read_data(target_type, targets, "genotype")
-
-    # 次元削減
-    vec = df[["rho", "nu", "recentness", "frequency"]]
-    reduced_vec = reduce_dimension(vec)
-
-    # dfにreduced_vecを追加
-    df.reset_index(drop=True, inplace=True)
-    df[["t-sne1", "t-sne2"]] = reduced_vec
-
-    margin = 5
-    xlim = (df["t-sne1"].min() - margin, df["t-sne1"].max() + margin)
-    ylim = (df["t-sne2"].min() - margin, df["t-sne2"].max() + margin)
-
-    for target in targets:
-        vmin = df[df["target"] == target]["distance"].min()
-        vmax = df[df["target"] == target]["distance"].max()
-        # 可視化
-        for algorithm in ["qd", "ga"]:
-            file = f"results/map/genotype/{target}_{algorithm}.png"
-            df_target_algo = df[(df["target"] == target) & (df["algorithm"] == algorithm)]
-            plot(df_target_algo, my_green_to_red_cmap, file, xlim, ylim, vmin, vmax)
-
-
 def phenotype_map(target_type: str, targets: list, my_color: dict) -> None:
     my_green_to_red_cmap = LinearSegmentedColormap.from_list(
         "my_green_to_red_gradient",
