@@ -42,11 +42,19 @@ def set_target_data(target_type: str, target: str) -> pd.DataFrame:
 
 
 def read_results(target_type: str, index: list) -> pd.DataFrame:
-    rs_results = pd.read_csv("results/random_search.csv").set_index(index)
+    rs_results = pd.read_csv("results/existing_full_search.csv").set_index(index)
 
-    if target_type == "synthetic":
-        rs_results = rs_results.head(100)
     return rs_results
+
+
+def convert_s(s: str) -> str:
+    if s == "SSW":
+        recentness = 1.0
+        frequency = 0.0
+    else:
+        recentness = 0.5
+        frequency = 0.5
+    return recentness, frequency
 
 
 if __name__ == "__main__":
@@ -55,7 +63,8 @@ if __name__ == "__main__":
 
     target_type = args.target_type
 
-    index = ["rho", "nu", "recentness", "frequency"]
+    index = ["rho", "nu", "s"]
+    out_index = ["rho", "nu", "recentness", "frequency", "distance"]
 
     targets = set_targets(target_type)
 
@@ -64,19 +73,15 @@ if __name__ == "__main__":
 
         rs_results = read_results(target_type, index)
 
-        # find best params
+        # find params
         rs_results["distance"] = (rs_results - target_data).abs().sum(axis=1)
-        rs_best_params = rs_results["distance"].idxmin()
-        rs_best_distance = rs_results["distance"].min()
 
         # convert to pandas.DataFrame
         df = rs_results.reset_index()
-        df_best = pd.DataFrame([rs_best_params], columns=index)
-        df_best["distance"] = rs_best_distance
+        df["recentness"], df["frequency"] = zip(*df["s"].map(convert_s))
 
         # save params and distance
         dir = f"results/{target}"
         os.makedirs(dir, exist_ok=True)
 
-        df[["rho", "nu", "recentness", "frequency", "distance"]].to_csv(f"{dir}/archive.csv", index=False)
-        df_best.to_csv(f"{dir}/best.csv", index=False)
+        df[out_index].to_csv(f"{dir}/archive.csv", index=False)
