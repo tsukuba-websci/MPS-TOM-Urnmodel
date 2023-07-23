@@ -2,9 +2,9 @@
 
 ## 概要
 
-以下の5種類の図と2種類の表を作成する。
+以下の5種類の図と2種類の表を出力するソースコードです。
 
-図を生成するスクリプトは`/graphs`にある。
+図を生成するスクリプトは`/graphs`にあります。
 - 箱ひげ図
   - `box.py`
   - full-search,random-search,GA,QD
@@ -39,7 +39,7 @@
 ## 実行方法
 
 ### 前処理
-GA,QD,ランダムサーチで見つけた最良のrho,nu,recentness,frequencyの組で壺モデルを10回走らせます。（既存モデルの全探索では初めから10回走らせているため、ここでは行いません）
+GA,QD,ランダムサーチで見つけた最良の`(rho,nu,recentness,frequency)`の組で壺モデルを10回走らせます。（既存モデルの全探索では初めから10回走らせているため、ここでは行いません）
 ```bash
 $ pwd # => /path/to/visualize
 $ python preprocessing.py <target_type>
@@ -56,7 +56,7 @@ $ python make_vec.py <target_type>
 
 
 ### 可視化のスクリプト
-図を出力する場合
+図を出力する場合:
 ```bash
 $ pwd # => /path/to/visualize
 $ python main.py <graph_type> <target_type>
@@ -65,7 +65,7 @@ $ python main.py <graph_type> <target_type>
 実行を行うと，`./results` 以下にグラフの種類ごとに分けられて結果が保存されます。
 
 
-最良個体の距離の平均と分散を示す表を出力する場合
+最良個体の距離の平均と分散を示す表を出力する場合:
 ```bash
 $ python tables/print_best.py <target_type>
 ```
@@ -74,5 +74,5 @@ $ python tables/print_best.py <target_type>
 $ pwd # => /path/to/visualize
 $ python graphs/latex_table.py
 ```
-`MPS-TOM-urnmodel/`で用意されているpoetry環境では、`latex_table.py`だけpandasのversionの依存関係が合わないため、動きません。
+`MPS-TOM-urnmodel/`で用意されているpoetry環境では、`latex_table.py`だけ`pandas`のversionの依存関係が合わないため、動きません。
 `pandas>=1.5.3`, `Jinja2>=3.0.0`, `matplotlib`, `numpy`のある環境で実行してください。

@@ -3,7 +3,9 @@
 Iwahashi, Okabe and Suda's experiments for MPS-TOM 2023
 
 ## Abstract
-エージェントベースの壺モデルの探索手法(全探索,GA,QD)の比較を行うリポジトリです。
+情報処理学会論文誌:数理モデル化と応用に投稿した論文に関するリポジトリです。
+
+エージェントベースの壺モデルの探索手法(全探索,ランダムサーチ,GA,QD)の比較を行います。
 - [**`data/`**](/data/)
   - 探索に用いるターゲットデータ
 - [**`full-search/`**](/full-search/)
