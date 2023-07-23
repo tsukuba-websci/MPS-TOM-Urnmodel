@@ -6,15 +6,18 @@ from matplotlib.colors import LinearSegmentedColormap
 from sklearn.manifold import TSNE
 
 
-def plot(df: pd.DataFrame, cmap: LinearSegmentedColormap, file: str, xlim, ylim, vmin, vmax) -> None:
+def plot(df: pd.DataFrame, cmap: LinearSegmentedColormap, file: str, xlim: tuple, ylim: tuple, vlim: tuple) -> None:
     dir = os.path.dirname(file)
     os.makedirs(dir, exist_ok=True)
     plt.rcParams["font.size"] = 30
     plt.figure(figsize=(10, 8))
+
+    # distanceが小さいほどマーカーを大きくする
     min_value = df["distance"].min()
     max_value = df["distance"].max()
     s = (df["distance"] - min_value) * (100 - 15) / (max_value - min_value) + 15
     s = 115 - s
+
     scatter = plt.scatter(
         df["t-sne1"],
         df["t-sne2"],
@@ -22,8 +25,8 @@ def plot(df: pd.DataFrame, cmap: LinearSegmentedColormap, file: str, xlim, ylim,
         cmap=cmap,
         s=s,
         alpha=0.5,
-        vmax=vmax,
-        vmin=vmin,
+        vmax=vlim[1],
+        vmin=vlim[0],
     )
     cbar = plt.colorbar(scatter, label="d", orientation="vertical", shrink=1)
     cbar.ax.invert_yaxis()
@@ -85,15 +88,17 @@ def phenotype_map(target_type: str, targets: list, my_color: dict) -> None:
     df.reset_index(drop=True, inplace=True)
     df[["t-sne1", "t-sne2"]] = reduced_vec
 
+    # x軸とy軸の範囲を設定
     margin = 5
     xlim = (df["t-sne1"].min() - margin, df["t-sne1"].max() + margin)
     ylim = (df["t-sne2"].min() - margin, df["t-sne2"].max() + margin)
 
     for target in targets:
+        # colorbarの範囲を設定
         vmin = df[df["target"] == target]["distance"].min()
         vmax = df[df["target"] == target]["distance"].max()
         # 可視化
         for algorithm in ["qd", "ga"]:
             file = f"results/map/phenotype/{target}_{algorithm}.png"
             df_target_algo = df[(df["target"] == target) & (df["algorithm"] == algorithm)]
-            plot(df_target_algo, my_green_to_red_cmap, file, xlim, ylim, vmin, vmax)
+            plot(df_target_algo, my_green_to_red_cmap, file, xlim, ylim, (vmin, vmax))
