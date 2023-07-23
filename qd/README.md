@@ -45,3 +45,16 @@ rho,nu,recentness,frequency,distance
 rho,nu,recentness,frequency,distance
 <float>,<float>,<float>,<float>,<float>
 ```
+
+### ハイパーパラメータチューニング
+ターゲットデータごとに適したセル数,graph2vecで表現する次元数を探索する場合は、`tuning.py`を実行してください。
+```bash
+$ python tunig.py <target_data>  [rho] [nu] [s]
+```
+結果は`./results/hyperparams-search/<target>/cells<cells>/dim<dim>`以下に`main.py`の結果と同じ形式で保存されます。`tuning.py`の実行には時間がかかるため、注意してください。
+
+チューニングした結果から最適なパラメータを見つけ、可視化できるようにするには、`search_best.py`を実行してください。
+```bash
+$ python copy_best.py <target_data>  [rho] [nu] [s]
+```
+`results/hyperparams/`にある各ハイパーパラメータでの結果から、最良のものが`results/`にコピーされます。
