@@ -39,7 +39,6 @@ def plot(df: pd.DataFrame, cmap: LinearSegmentedColormap, file: str, xlim, ylim,
 def reduce_dimension(data: pd.DataFrame) -> pd.DataFrame:
     # 正規化
     normalized_data = (data - data.mean(axis=0)) / data.std(axis=0)
-    print(normalized_data)
 
     # t-SNEで次元削減
     tsne = TSNE(n_components=2)  # 削減後の次元数を2に設定
@@ -47,8 +46,6 @@ def reduce_dimension(data: pd.DataFrame) -> pd.DataFrame:
 
     # reduced_dataをDataFrameに変換
     reduced_data_df = pd.DataFrame(reduced_data, columns=["t-sne1", "t-sne2"])
-
-    reduced_data_df.to_csv("results/reduced_data.csv")
 
     return reduced_data_df
 
@@ -62,11 +59,7 @@ def read_data(target_type: str, targets: list, type: str):
 
     for target in targets:
         for algorithm in ["qd", "ga"]:
-            if type == "genotype":
-                filenum_str = "{:0>8}".format(generation - 1)
-                file_path = f"../{algorithm}/results/{target}/archives/{filenum_str}.csv"
-            elif type == "phenotype":
-                file_path = f"results/vec/{target}/{algorithm}.csv"
+            file_path = f"results/vec/{target}/{algorithm}.csv"
             df_ = pd.read_csv(file_path)
             df_["target"] = target
             df_["algorithm"] = algorithm
@@ -80,7 +73,6 @@ def phenotype_map(target_type: str, targets: list, my_color: dict) -> None:
         [my_color["dark_red"], my_color["yellow"], my_color["yellow_green"], my_color["dark_green"]],
     )
 
-    pd.set_option("display.max_rows", 100)  # すべての行を表示
     df = read_data(target_type, targets, "phenotype")
 
     column_names = [f"vec{i}" for i in range(128)]
@@ -92,7 +84,6 @@ def phenotype_map(target_type: str, targets: list, my_color: dict) -> None:
     # dfにreduced_vecを追加
     df.reset_index(drop=True, inplace=True)
     df[["t-sne1", "t-sne2"]] = reduced_vec
-    df.to_csv("results/phenotype.csv")
 
     margin = 5
     xlim = (df["t-sne1"].min() - margin, df["t-sne1"].max() + margin)
