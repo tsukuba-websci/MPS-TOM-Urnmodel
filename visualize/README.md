@@ -44,7 +44,7 @@ GA,QD,ランダムサーチで見つけた最良の`(rho,nu,recentness,frequency
 $ pwd # => /path/to/visualize
 $ python preprocessing.py <target_type>
 ```
-この結果は`./results/fitted`に保存され、棒グラフ・レーダーチャート,最良個体の距離の表の生成に用いられます。
+この結果は`./results/fitted`に保存され、棒グラフ・レーダーチャート、最良個体の距離の表の生成に用いられます。
 
 
 GA,QDの最終的な全個体のに対して、壺モデルを回してネットワークを生成します。そのネットワークをgraph2vecしたベクトルを保存しておきます。
