@@ -3,8 +3,8 @@ import csv
 import os
 from multiprocessing import Pool
 from typing import Dict, cast
-import numpy as np
 
+import numpy as np
 import pandas as pd
 
 from lib.history2vec import History2Vec, History2VecResult
@@ -18,8 +18,7 @@ if __name__ == "__main__":
     target_type = parser.parse_args().target_type
 
     if target_type == "empirical":
-        targets = ["mixi"]
-        # targets = ["aps", "twitter"]
+        targets = ["aps", "twitter"]
         # targets = ["aps", "twitter", "mixi"]
     elif target_type == "synthetic":
         targets = [
@@ -57,26 +56,31 @@ if __name__ == "__main__":
         target_vec = History2VecResult(**df)
 
         for algorithm in algorithms:
+            # 最後の世代のarchiveを読み込む
             filenum_str = "{:0>8}".format(generation - 1)
             file_path = f"../{algorithm}/results/{target}/archives/{filenum_str}.csv"
             df = pd.read_csv(file_path)
 
+            # archiveのParamsで壺モデルを走らせる
             params_list = []
             for i in range(df.shape[0]):
                 row = cast(Dict[str, float], df.iloc[i].to_dict())
                 param = Params(row["rho"], row["nu"], row["recentness"], row["frequency"], 20000)
                 params_list.append(param)
-
             with Pool(thread_num) as pool:
                 histories = pool.map(run_model, params_list)
 
+            # historiesからgraph2vecのベクトル,10個の指標を計算
             bcs = history2bd.run(histories)
             history_vecs = history2vec_.history2vec_parallel(histories, 1000)
+
+            # 距離を計算
             distances = []
             for history_vec in history_vecs:
                 distance: np.float64 = np.sum(np.abs((np.array(history_vec) - np.array(target_vec))))  # type: ignore
                 distances.append(distance)
 
+            # graph2vecした結果のベクトルと距離を保存
             with open(f"results/vec/{target}/{algorithm}.csv", "w") as f:
                 writer = csv.writer(f)
                 writer.writerow(header)

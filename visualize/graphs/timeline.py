@@ -8,6 +8,8 @@ plt.rcParams["font.size"] = 18
 
 
 def archives2df(df: pd.DataFrame, df_min: pd.DataFrame, target: str, algorithm: str):
+    # dfには全個体の距離、df_minには各世代の最良個体の距離を追加していく
+
     basedir = f"../{algorithm}/results/{target}/archives"
     files = sorted(os.listdir(basedir))
 
@@ -57,8 +59,13 @@ def plot_data(algorithms: list, data: dict, data_min: dict, ymax: float, file_na
 
 
 def plot_timeline(target_type: str, targets: list, my_color: dict) -> None:
+    """
+    GAとQDの学習曲線をプロットする。
+    全個体の距離の平均と標準偏差、各世代の最良個体の距離をプロットする。
+    """
     algorithms = ["ga", "qd"]
     if target_type == "empirical":
+        # 実データの場合は、全ターゲットをまとめてプロットする
         data = {}
         data_min = {}
         ymax = 0
@@ -77,6 +84,7 @@ def plot_timeline(target_type: str, targets: list, my_color: dict) -> None:
         plot_data(algorithms, data, data_min, ymax, target_type, None)
 
     else:
+        # 合成データの場合は、ターゲットごとにプロットする
         for target in targets:
             data = {}
             data_min = {}

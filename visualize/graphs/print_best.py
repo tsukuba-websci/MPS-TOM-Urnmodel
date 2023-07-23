@@ -5,9 +5,9 @@ import pandas as pd
 
 
 def read_target_data(target_type: str, targets: list) -> dict:
-def print_best(targets: list) -> None:
-    algorithms = ["full-search", "qd", "ga", "random-search"]
-
+    """
+    ターゲットデータを読み込み、10個の指標を辞書型で返す
+    """
     target_data = {}
 
     if target_type == "empirical":
@@ -28,6 +28,9 @@ def print_best(targets: list) -> None:
 
 
 def caluculate_distance(target_data: dict, algorithms: list, targets: list) -> dict[str, dict[str, pd.Series]]:
+    """
+    ターゲットごと、アルゴリズムごとの距離を各10個返す
+    """
     distances = {}
 
     for target in targets:
@@ -58,6 +61,9 @@ def caluculate_distance(target_data: dict, algorithms: list, targets: list) -> d
 
 
 def create_dataframe(distances: dict, algorithms: list, targets: list) -> pd.DataFrame:
+    """
+    結果が見やすいようにデータフレームを作成する
+    """
     dfs = pd.DataFrame()
 
     for target in targets:
@@ -76,6 +82,10 @@ def create_dataframe(distances: dict, algorithms: list, targets: list) -> pd.Dat
 
 
 if __name__ == "__main__":
+    """
+    各アルゴリズムで見つけた最良パラメータで、壺モデルを10回走らせたときのdistanceの平均と標準偏差を出力する
+    """
+
     parser = argparse.ArgumentParser()
     parser.add_argument("target_type", type=str, choices=["empirical", "synthetic"], help="データの種類")
     args = parser.parse_args()

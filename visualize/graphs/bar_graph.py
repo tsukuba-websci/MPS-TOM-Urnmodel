@@ -13,6 +13,10 @@ target_labels = {
 
 
 def plot_bar_graph(target_type: str, targets: list, my_color: dict) -> None:
+    """
+    各アルゴリズムで探索した最良のパラメータで、壺モデルを10回回したときのdistanceの棒グラフを作成するスクリプトです。
+    最終的な論文には掲載していないですが、念のため残しておいています｡
+    """
     df = pd.DataFrame()
     fs_results = (
         pd.read_csv("../full-search/results/existing_full_search.csv").set_index(["rho", "nu", "s"]).sort_index()
