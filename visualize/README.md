@@ -69,7 +69,8 @@ $ python main.py <graph_type> <target_type>
 ```bash
 $ python tables/print_best.py <target_type>
 ```
-また、latex形式で遺伝子の表を出力するには、以下のコマンドを実行してください。
+
+latex形式で遺伝子の表を出力する場合：
 ```bash
 $ pwd # => /path/to/visualize
 $ python graphs/latex_table.py
