@@ -22,8 +22,6 @@ readable_metrics = {
 
 # 実データ・合成データ共にターゲットごとの10個の指標のレーダーチャートを作成する
 # 10回壺モデルを回した結果の平均値をプロットする
-
-
 def plot_radar_chart(target_type: str, targets: list, my_color: dict) -> None:
     os.makedirs("results/radar_chart", exist_ok=True)
 

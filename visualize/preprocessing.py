@@ -28,23 +28,29 @@ if __name__ == "__main__":
         ]
 
     algorithms = ["ga", "qd", "random-search"]
+    header = ["gamma", "no", "nc", "oo", "oc", "c", "y", "g", "r", "h"]
 
     jl_main, thread_num = JuliaInitializer().initialize()
     history2vec_ = History2Vec(jl_main, thread_num)
+
     for target in targets:
         os.makedirs(f"results/fitted/{target}", exist_ok=True)
+
         for algorithm in algorithms:
+            # 最良のパラメータを読み込み、Paramsに変換する
             path = f"../{algorithm}/results/{target}/best.csv"
             df = pd.read_csv(path)
             df = cast(Dict[str, float], pd.read_csv(path).iloc[0].to_dict())
             param = Params(df["rho"], df["nu"], df["recentness"], df["frequency"], 20000)
-            header = ["gamma", "no", "nc", "oo", "oc", "c", "y", "g", "r", "h"]
+
             res = []
+            # 最良のパラメータで壺モデルを10回走らせ、10個の指標を計測する
             for _ in range(10):
                 history = run_model(param)
                 history2vec_result = history2vec_.history2vec(history, 1000)
                 res.append(history2vec_result)
 
+            # csvに10個の指標を保存する
             with open(f"results/fitted/{target}/{algorithm}.csv", "w") as f:
                 writer = csv.writer(f)
                 writer.writerow(header)

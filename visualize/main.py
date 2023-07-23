@@ -11,9 +11,10 @@ from visualize.graphs.timeline import plot_timeline
 
 
 def parse_args(parser: argparse.ArgumentParser) -> argparse.Namespace:
-    parser.add_argument("graph_type", type=str, choices=["bar", "radar", "timeline", "box", "qd_map"], help="グラフの種類")
+    parser.add_argument("graph_type", type=str, choices=["radar", "timeline", "box", "map", "bar"], help="グラフの種類")
     parser.add_argument("target_type", type=str, choices=["empirical", "synthetic"], help="データの種類")
     args = parser.parse_args()
+
     return args
 
 
@@ -25,8 +26,8 @@ if __name__ == "__main__":
     target_type = args.target_type
 
     if target_type == "empirical":
-        # targets = ["twitter", "aps"]
-        targets = ["twitter", "aps", "mixi"]
+        targets = ["twitter", "aps"]
+        # targets = ["twitter", "aps", "mixi"]
     else:
         targets = [
             f"{target_type}/rho5_nu5_sSSW",

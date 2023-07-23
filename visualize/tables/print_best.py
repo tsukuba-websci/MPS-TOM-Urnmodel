@@ -4,11 +4,11 @@ import re
 import pandas as pd
 
 
-def print_best(targets: list) -> None:
-    algorithms = ["full-search", "qd", "ga", "random-search"]
-
+def read_target_data(target_type: str, targets: list) -> dict:
+    """
+    ターゲットデータを読み込み、10個の指標を辞書型で返す
+    """
     target_data = {}
-    distances = {}
 
     if target_type == "empirical":
         for target in targets:
@@ -24,8 +24,18 @@ def print_best(targets: list) -> None:
             synthetic = pd.read_csv("../data/synthetic_target.csv").set_index(["rho", "nu", "s"]).sort_index()
             target_data[target] = synthetic.loc[(rho, nu, s), :].mean()
 
+    return target_data
+
+
+def caluculate_distance(target_data: dict, algorithms: list, targets: list) -> dict[str, dict[str, pd.Series]]:
+    """
+    ターゲットごと、アルゴリズムごとの距離を各10個返す
+    """
+    distances = {}
+
     for target in targets:
         distances[target] = {}
+
         for algorithm in algorithms:
             if algorithm == "full-search":
                 file_path = f"../{algorithm}/results/{target}/archive.csv"
@@ -34,6 +44,7 @@ def print_best(targets: list) -> None:
                 best_params = min_distance_row[["rho", "nu", "recentness", "frequency"]]
                 tmp = data[data[["rho", "nu", "recentness", "frequency"]].eq(best_params).all(axis=1)]
                 distance = tmp["distance"]
+
             else:
                 file_path = f"results/fitted/{target}/{algorithm}.csv"
                 data = pd.read_csv(file_path).head(10)
@@ -43,9 +54,18 @@ def print_best(targets: list) -> None:
                 data_best = pd.read_csv(file_best_csv)
                 distance_best = data_best["distance"]
                 distance = pd.concat([distance, distance_best], axis=0)
+
             distances[target][algorithm] = distance
 
+    return distances
+
+
+def create_dataframe(distances: dict, algorithms: list, targets: list) -> pd.DataFrame:
+    """
+    結果が見やすいようにデータフレームを作成する
+    """
     dfs = pd.DataFrame()
+
     for target in targets:
         for algorithm in algorithms:
             df = pd.DataFrame(
@@ -58,18 +78,23 @@ def print_best(targets: list) -> None:
             )
             dfs = pd.concat([dfs, df], axis=0)
 
-    print(dfs.reset_index(drop=True))
+    return dfs.reset_index(drop=True)
 
 
 if __name__ == "__main__":
+    """
+    各アルゴリズムで見つけた最良パラメータで、壺モデルを10回走らせたときのdistanceの平均と標準偏差を出力する
+    """
+
     parser = argparse.ArgumentParser()
     parser.add_argument("target_type", type=str, choices=["empirical", "synthetic"], help="データの種類")
     args = parser.parse_args()
     target_type = args.target_type
 
     if target_type == "empirical":
-        # targets = ["twitter", "aps"]
-        targets = ["mixi", "aps", "twitter"]
+        targets = ["twitter", "aps"]
+        # targets = ["mixi", "aps", "twitter"]
+
     elif target_type == "synthetic":
         targets = [
             "synthetic/rho5_nu5_sSSW",
@@ -80,4 +105,10 @@ if __name__ == "__main__":
             "synthetic/rho20_nu7_sWSW",
         ]
 
-    print_best(targets)
+    algorithms = ["full-search", "qd", "ga", "random-search"]
+
+    target_data = read_target_data(target_type, targets)
+    distances = caluculate_distance(target_data, algorithms, targets)
+    dfs = create_dataframe(distances, algorithms, targets)
+
+    print(dfs)
