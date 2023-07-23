@@ -3,16 +3,20 @@
 Iwahashi, Okabe and Suda's experiments for MPS-TOM 2023
 
 ## Abstract
-エージェントベースの壺モデルの探索手法(全探索,GA,QD)の比較を行うリポジトリです。
+情報処理学会論文誌:数理モデル化と応用に投稿した論文に関するリポジトリです。
+
+エージェントベースの壺モデルの探索手法(全探索,ランダムサーチ,GA,QD)の比較を行います。
 - [**`data/`**](/data/)
   - 探索に用いるターゲットデータ
 - [**`full-search/`**](/full-search/)
-  - 全探索を行うスクリプト
+  - 既存モデルの全探索を行うスクリプト
+- [**`random-search/`**](/random-search/)
+  - ランダムサーチによる探索を行うスクリプト
 - [**`ga/`**](/ga/)
   - 遺伝的アルゴリズムによる探索を行うスクリプト
-- [**`qd`**](/qd/)
+- [**`qd/`**](/qd/)
   - Quality Diversityによる探索を行うスクリプト
-- [**`visualize`**](/visualize/)
+- [**`visualize/`**](/visualize/)
   - 探索結果をもとに可視化するスクリプト
 
 ## Requirements
@@ -23,7 +27,7 @@ Iwahashi, Okabe and Suda's experiments for MPS-TOM 2023
 - Rust (latest)
   - Rustの実行環境があれば問題ありません
 
-`full-search/`,`ga/`,`qd/`から上位のディレクトリ`lib/`の中身をimportするためにpoetryを用いて設定しています。依存関係は`$ poetry install`でインストールしてください。
+`full-search/`,`random-search/`,`ga/`,`qd/`から上位のディレクトリ`lib/`の中身をimportするためにpoetryを用いて設定しています。依存関係は`$ poetry install`でインストールしてください。
 
 
 ## Usage
@@ -36,7 +40,7 @@ julia --proj=. --threads=auto make_synthetic_target.jl
 $$(\rho,\nu,s)=(5,5,SSW),(5,5,WSW),(5,15,SSW),(5,15,WSW),(20,7,SSW),(20,7,WSW)$$
 
 ### Search　Params
-各ディレクトリ`full-search/`,`ga/`,`qd/`のREADMEの指示に従って、`main.py`及び`main.jl`を実行してください。
+各ディレクトリ`full-search/`,`random-search/`,`ga/`,`qd/`のREADMEの指示に従って、`main.py`及び`main.jl`を実行してください。
 #### Required Files
 - `./data/aps.csv`
 - `./data/twitter.csv`
@@ -47,6 +51,7 @@ $$(\rho,\nu,s)=(5,5,SSW),(5,5,WSW),(5,15,SSW),(5,15,WSW),(20,7,SSW),(20,7,WSW)$$
 #### Required Files
 - `./data/...`
 - `./full-search/results/...`
+- `./random-search/results/...`
 - `./ga/results/...`
 - `./qd/results/...`
 
